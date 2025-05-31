@@ -1,0 +1,20 @@
+& $env:ahk "$PSScriptRoot\hotkey.ahk"
+
+. .\New-Project.ps1
+. .\Show-Term.ps1
+$configuredProjects = $ProjectConfigs.Keys
+$LastDesktop = Get-CurrentDesktop
+Get-DesktopList | Where-Object { $configuredProjects -contains $_.Name } | foreach {
+	Switch-Desktop -Desktop $_.Name # Puisque $_ n'est pas un desktop object, apparemment
+    New-Project $_.Name
+	Start-Sleep 0.5 # For the program to open before switching to the next desktop... 1 enough
+}
+Switch-Desktop $LastDesktop # Windows starts on the desktop that was used when it was shutdown. We don't want to change the behaviour. Setting up desktops force us to switch to them but after that, back to the one where the user was.
+
+# & "C:\Users\mmi\VirtualDesktop11-24H2.exe /Animation:0" # Ne fonctionne pas ET semble faire une grave memory leak...
+
+# Windows semble persister les virtual desktops au reboot. Donc je ne les crée qu'une fois au début, dans 'win..ps1'.
+
+# Switch-Desktop -Desktop "docs" # Ce sera le plus utilisé. Mais voyons si Windows se souvient que j'étais dessus en quittant.
+
+. .\Start-Term.ps1
