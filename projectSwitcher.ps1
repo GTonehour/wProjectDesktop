@@ -1,6 +1,6 @@
 # cls
 
-. .\Show-Term.ps1
+. $env:LOCALAPPDATA\wProjectDesktop\Show-Term.ps1
 
 . $env:LOCALAPPDATA\wProjectDesktop\New-Project.ps1 # Absolu
 
@@ -24,11 +24,13 @@ Select-Object -ExpandProperty newName |
 fzf.exe --prompt "Open project " --bind one:accept # Sélection automatique quand un seul match
 if (-not [string]::IsNullOrEmpty($selection)) { # Si on a fait échap, ne faisons rien d'autre.
 	$project = $projects | Where-Object { $_.newName -eq $selection }
-	New-Desktop | Set-DesktopName -Name $project.Name
-	Switch-Desktop -Desktop $project.Name
 	if(-not $project.Opened) {
+		New-Desktop | Set-DesktopName -Name $project.Name
+		Switch-Desktop -Desktop $project.Name
 		New-Project $project.Name
 		# on voudra y faire quelque chose dans ce projet, puisqu'il est nouveau
 		Show-Term
+	} else {
+		Switch-Desktop -Desktop $project.Name
 	}
 }
