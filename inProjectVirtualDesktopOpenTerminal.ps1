@@ -24,20 +24,21 @@ $spawnWt = "$wtLocated -p cmdLatte"
 
 $wProjectDesktop = "$env:LOCALAPPDATA\wProjectDesktop"
 $PowerShellCmds = @(
-[PSCustomObject]@{Name = "nvim"; Cmd = "$spawnWt --title nvim nvim ."} # Le -w semble nécessaire, et ddétermine le terminal où s'ouvrira l'onglet
+[PSCustomObject]@{Name = "nvim"; Cmd = "$spawnWt --title `"nvim $project`" nvim ."} # project dans le title car si on est amené à déplacer cette fenêtre dans le desktop of another project, on pourra la distinguer de son homologue local.
 [PSCustomObject]@{Name = "Open recent project (switcher)"; Cmd = ". $wProjectDesktop\projectSwitcher.ps1"}
 [PSCustomObject]@{Name = "neovide"; Cmd = "neovide ."}
-[PSCustomObject]@{Name = "WindowsTerminal Powershell"; Cmd = "$wtLocated --title Terminal"} # puisque powerLatte est le default profile
+[PSCustomObject]@{Name = "WindowsTerminal Powershell"; Cmd = "$wtLocated --title `"Terminal $project`""} # puisque powerLatte est le default profile
 [PSCustomObject]@{Name = "explorer"; Cmd = "explorer ."}
 [PSCustomObject]@{Name = "code"; Cmd = "code ."}
-[PSCustomObject]@{Name = "lazygit"; Cmd = "$spawnWt --title lazygit lazygit"}
-[PSCustomObject]@{Name = "yazi"; Cmd = "$spawnWt --title yazi yazi ."}
+[PSCustomObject]@{Name = "lazygit"; Cmd = "$spawnWt --title `"lazygit $project`" lazygit"}
+[PSCustomObject]@{Name = "yazi"; Cmd = "$spawnWt --title `"yazi $project`" yazi ."}
 [PSCustomObject]@{Name = "gitk"; Cmd = "gitk --all"} # Aussi dans lazygit, 'a' dans le [1]
 [PSCustomObject]@{Name = "Quick git push"; Cmd = "git add .; git commit -m `"Quick push`"; git push"}
 [PSCustomObject]@{Name = "ssh port-forwarding PG"; Cmd = "$spawnWt --title `"ssh port-forwarding PG`" ssh -fNL 15432:localhost:5432 mmi@$env:VPS"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
 [PSCustomObject]@{Name = "ssh port-forward HashiCorp Vault"; Cmd = "$spawnWt --title `"ssh port-forwarding HashiCorp Vault`" ssh -NL 8200:localhost:8200 mmi@$env:VPS; Start-Process firefox -ArgumentList https://localhost:8200"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
 [PSCustomObject]@{Name = "Create new project"; Cmd = ". $wProjectDesktop\createNewProject.ps1"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
 [PSCustomObject]@{Name = "Refresh Rainmeter"; Cmd = ". `"$env:projects\docs\Keep on screen rainmeter skin refresh verif.ps1`""}
+[PSCustomObject]@{Name = "verif_aff"; Cmd = "cd $env:projects\docs ; .\venv\verif\Scripts\Activate.ps1 ; py verif_aff.py ; deactivate"}
 ) | ForEach-Object { $_ | Add-Member -NotePropertyName "Type" -NotePropertyValue "PowerShell" -PassThru }
 
 $BashCmds = @(
