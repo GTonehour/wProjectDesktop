@@ -1,4 +1,8 @@
-& $env:ahk "$PSScriptRoot\hotkey.ahk"
+# pwd ne montre rien du tout...
+Set-Location $PSScriptRoot # Car HKCU le lance depuis je ne sais où Depuis où, d'ailleurs ?
+# ... ici non plus
+
+& $env:ahk .\hotkey.ahk
 
 . .\New-Project.ps1
 . .\Show-Term.ps1
@@ -7,7 +11,7 @@ $LastDesktop = Get-CurrentDesktop
 Get-DesktopList | Where-Object { $configuredProjects -contains $_.Name } | foreach {
 	Switch-Desktop -Desktop $_.Name # Puisque $_ n'est pas un desktop object, apparemment
     New-Project $_.Name
-	Start-Sleep 0.5 # For the program to open before switching to the next desktop... 1 enough
+	Start-Sleep 1.5 # For the program to open before switching to the next desktop... 1/2 (Thunderbird)
 }
 Switch-Desktop $LastDesktop # Windows starts on the desktop that was used when it was shutdown. We don't want to change the behaviour. Setting up desktops force us to switch to them but after that, back to the one where the user was.
 
