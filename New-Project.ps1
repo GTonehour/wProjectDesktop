@@ -5,7 +5,7 @@ $ProjectConfigs = @{
             'https://mattermost.telamon.eu/'
         )
         processes = @(
-            'MSTeams'
+            'ms-teams'
         )
     }
     'music' = @{
