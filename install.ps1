@@ -5,14 +5,9 @@ param(
 $ErrorActionPreference = "Stop"
 
 $InstallDir = "$env:LOCALAPPDATA\wProjectDesktop"
-$StartupFile = Join-Path $InstallDir "Startup.ps1"
+$StartupFile = "Startup.ps1"
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
-
-$SourceStartupPath = Join-Path $ScriptDir "Startup.ps1"
-if (-not (Test-Path $SourceStartupPath)) {
-    throw "Startup.ps1 not found in $ScriptDir"
-}
 
 # Create installation directory if it doesn't exist
 if (-not (Test-Path $InstallDir)) {
@@ -20,10 +15,14 @@ if (-not (Test-Path $InstallDir)) {
     Write-Host "Created installation directory: $InstallDir" -ForegroundColor Green
 }
 
+Set-Location $InstallDir
+
 # Copy entire project to installation directory
 Write-Host "Copying project files to: $InstallDir" -ForegroundColor Green
-Copy-Item "$ScriptDir\*" $InstallDir -Recurse -Force
+Copy-Item "$ScriptDir\*" . -Recurse -Force
 Write-Host "Successfully copied all project files" -ForegroundColor Green
+
+mkdir "State"
 
 # MScholtes/VirtualDesktop dependency
 # We compile it ourselves from their open-source code, for security reasons.
@@ -32,7 +31,8 @@ Write-Host "Successfully copied all project files" -ForegroundColor Green
 # * add 150 Kb to our repo
 # + but users could ensure we're actually downloading from a legitimate repo without having to calculate both cheksums.
 # Let's favor security.
-$outFile = Join-Path $InstallDir "bin" "VirtualDesktop.exe"
+mkdir "bin"
+$outFile = Join-Path "bin" "VirtualDesktop.exe"
 Write-Host "Downloading MScholtes/VirtualDesktop executable..."
 try {
 	Invoke-WebRequest https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe -OutFile $outFile
