@@ -9,10 +9,10 @@ set "desktop_line=%output%"
 for /f "tokens=2 delims='" %%a in ("%desktop_line%") do set "currentDesktopName=%%a"
 
 REM Read current project from file
-if not exist ".\State\currentProject.txt" (
+if not exist "..\State\currentProject.txt" (
     exit /b 2
 )
-set /p currentProject=<".\State\currentProject.txt"
+set /p currentProject=<"..\State\currentProject.txt"
 
 REM Compare and return appropriate exit code
 if "%currentDesktopName%"=="%currentProject%" (

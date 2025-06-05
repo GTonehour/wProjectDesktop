@@ -27,9 +27,15 @@ Commands are [configurable], they run located in your project directory: no need
 # Small dependency
 # Usage
 
-
-
-
+# Install
+## Executable
+## Clone
+- Install (AutoHotkey v2)[www.autohotkey.com/about]
+- ~~~ps1
+  git clone ...
+  Set-Location wProjectDesktop
+  .\Install.ps1
+  ~~~
 > What if I want a dedicated desktop for something with apps but no files, for instance a music player?
 
 Just create an empty "music" directory, as if it was a project. It might sound like a hack, but wProjectDesktop tries to rely on existing OS features instead of introducing specific settings, to be as [thin] as possible.

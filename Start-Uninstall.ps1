@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $InstallDir = "$env:LOCALAPPDATA\wProjectDesktop"
 
 # Check if Uninstall.ps1 exists
-$UninstallScript = "$InstallDir\src\Start-Uninstall.ps1"
+$UninstallScript = "$InstallDir\Uninstall.ps1"
 if (-not (Test-Path $UninstallScript)) {
     Write-Host "Uninstall script not found at: $UninstallScript" -ForegroundColor Red
     Write-Host "wProjectDesktop may not be installed or already removed" -ForegroundColor Yellow

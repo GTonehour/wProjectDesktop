@@ -1,8 +1,8 @@
 # cls
 
-. $env:LOCALAPPDATA\wProjectDesktop\Show-Term.ps1
+. $env:LOCALAPPDATA\wProjectDesktop\src\Show-Term.ps1
 
-. $env:LOCALAPPDATA\wProjectDesktop\New-Project.ps1 # Absolu
+. $env:LOCALAPPDATA\wProjectDesktop\src\New-Project.ps1 # Absolu
 
 # Pour créer un symlink, ouvrir PS en Admin puis `new-item -itemtype symboliclink -path C:\Users\mmi\projects -name nvim -value "$env:LOCALAPPDATA\nvim"` ($env:USERPROFILE comme path, seulement si on est cet admin en tant que qui on est connecté)
 $documentsPath = "$env:USERPROFILE\projects"

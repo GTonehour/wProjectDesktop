@@ -1,11 +1,9 @@
-# pwd ne montre rien du tout...
-Set-Location $PSScriptRoot # Car HKCU le lance depuis je ne sais où Depuis où, d'ailleurs ?
-# ... ici non plus
+Set-Location $env:LocalAppData\wProjectDesktop
 
-& $env:ahk .\hotkey.ahk
+& $env:ahk_wPD .\src\hotkey.ahk
 
-. .\New-Project.ps1
-. .\Show-Term.ps1
+. .\src\New-Project.ps1
+. .\src\Show-Term.ps1
 $configuredProjects = $ProjectConfigs.Keys
 $LastDesktop = Get-CurrentDesktop
 Get-DesktopList | Where-Object { $configuredProjects -contains $_.Name } | foreach {
@@ -21,4 +19,4 @@ Switch-Desktop $LastDesktop # Windows starts on the desktop that was used when i
 
 # Switch-Desktop -Desktop "docs" # Ce sera le plus utilisé. Mais voyons si Windows se souvient que j'étais dessus en quittant.
 
-. .\Start-Term.ps1
+. .\src\Start-Term.ps1

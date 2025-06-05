@@ -4,4 +4,4 @@ $newProject = Read-Host
 mkdir ..\$newProject
 New-Desktop | Set-DesktopName -Name $newProject
 Switch-Desktop -Desktop $newProject
-& $env:ahk "$env:LOCALAPPDATA\wProjectDesktop\focusTermStandalone.ahk"
+& $env:ahk_wPD "$env:LOCALAPPDATA\wProjectDesktop\src\focusTermStandalone.ahk"
