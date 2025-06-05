@@ -28,7 +28,6 @@ PlaySound(Sound) {
 	}
 
 F1::{
-        MsgBox("F1")
 	if WinExist(TERM){
 	; See Discussions.txt
 exitCode := RunWait('desktop_matches_state.bat', , "Hide")
@@ -52,7 +51,6 @@ switch exitCode {
 }
 	} else { ; If the user alt+F4d it for some reason
 		RunWait 'powershell.exe -ExecutionPolicy Bypass -File ' . EnvGet("LocalAppData") . '\wProjectDesktop\src\Start-Term.ps1'
-        MsgBox("ended")
 	}
 }
 
