@@ -39,13 +39,24 @@ function Find-AutoHotkeyPath {
     
     # 4. Common installation paths
     Write-Host "Checking common installation paths..." -ForegroundColor Yellow
-    $commonPaths = @(
-        "${env:ProgramFiles}\AutoHotkey\AutoHotkey.exe",
-        "${env:ProgramFiles(x86)}\AutoHotkey\AutoHotkey.exe",
-        "${env:LOCALAPPDATA}\Programs\AutoHotkey\AutoHotkey.exe"
-    )
+# Determine the appropriate executable based on system architecture
+if ([Environment]::Is64BitOperatingSystem) {
+    $ahkExe = "AutoHotkey64.exe"
+    Write-Host "Detected 64-bit system, looking for $ahkExe" -ForegroundColor Cyan
+} else {
+    $ahkExe = "AutoHotkey32.exe"
+    Write-Host "Detected 32-bit system, looking for $ahkExe" -ForegroundColor Cyan
+}
+# Write-Host "Looking for $ahkExe"
+
+$commonPaths = @(
+    "${env:ProgramFiles}\AutoHotkey\$ahkExe",
+    "${env:ProgramFiles(x86)}\AutoHotkey\$ahkExe",
+    "${env:LOCALAPPDATA}\Programs\AutoHotkey\v2\$ahkExe"
+)
     
     foreach ($path in $commonPaths) {
+		# Write-Host $path
         if (Test-Path $path) {
             Write-Host "Found AutoHotkey at: $path" -ForegroundColor Green
             return $path
@@ -57,7 +68,7 @@ function Find-AutoHotkeyPath {
     Write-Host ""
     
     # --- MODIFICATION START: Offer automatic download and install ---
-    $choice = Read-Host "Would you like to attempt to download and install AutoHotkey v2 automatically? (y/n)"
+    $choice = Read-Host "Download and install AutoHotkey v2 ? (Else you'll be prompted to manually enter the path to the exe file.) (y/n)"
     if ($choice -match '^(y|yes)$') {
         Write-Host "Attempting to download and install AutoHotkey v2..." -ForegroundColor Cyan
         $tempSetupFile = Join-Path $env:TEMP "ahk-v2-setup.exe" # Download to a temporary path
