@@ -46,4 +46,4 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 Write-Host "Uninstall completed" -ForegroundColor Green
-Write-Host "Note: Any running wProjectDesktop processes must be manually terminated" -ForegroundColor Yellow
+Write-Host "Note: Any running wProjectDesktop processes must be manually terminated"
