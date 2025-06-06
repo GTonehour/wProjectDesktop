@@ -108,4 +108,13 @@ Write-Host "Starting application..." -ForegroundColor Green
 Start-Process PowerShell.exe -ArgumentList "-ExecutionPolicy", "Bypass", "-File", "`"$StartupFile`"" -WindowStyle Hidden
 Write-Host "Application started successfully" -ForegroundColor Green
 
+if (-not $env:wPD_Config_Home) {
+	$default_config_home = "$env:LocalAppData\wProjectDesktop\config"
+# Car le env ne deviendra valide qu'après refresh du shell...
+	$env:wPD_Config_Home = $default_config_home
+	Write-Host "The wPD_Config_Home environment variable wasn't assigned. Assigned to $default_Config_Home by default."
+}else{
+        Write-Host "wPD_Config_Home environment variable detected: $env:wPR_Config_Home" -ForegroundColor Green
+}
+
 Pop-Location # Voir Push-Location plus haut.

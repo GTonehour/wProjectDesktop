@@ -1,5 +1,5 @@
 function Get-ProjectList {
-$configPath = "$env:LocalAppData\wProjectDesktop\config\projects.json"
+$configPath = "$env:wPD_Home_Config\projects.json"
 
 if (-not (Test-Path $configPath)) {
    Write-Host "Config file not found at: $configPath" -ForegroundColor Red
