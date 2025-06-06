@@ -1,6 +1,13 @@
 function Get-ProjectList {
-    $configPath = "$env:LocalAppData\wProjectDesktop\config\projects.json"
-    $config = Get-Content $configPath | ConvertFrom-Json
+$configPath = "$env:LocalAppData\wProjectDesktop\config\projects.json"
+
+if (-not (Test-Path $configPath)) {
+   Write-Host "Config file not found at: $configPath" -ForegroundColor Red
+   Write-Host "Please create the config file first." -ForegroundColor Yellow
+   exit 1
+}
+
+$config = Get-Content $configPath | ConvertFrom-Json
 
     $projectList = @()
     foreach ($item in $config) {

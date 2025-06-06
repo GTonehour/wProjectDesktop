@@ -34,7 +34,13 @@ function New-Project {
             Start-Process chrome -ArgumentList "--window-name=$projectName", $site # On donne un nom à la fenêtre car quand on fait clic-droit sur l'onglet d'une autre fenêtre (peut-être dans un autre bureau), "déplacer vers une nouvelle fenêtre" liste ce window-name
         }
         foreach ($process in $config.processes) {
-            Start-Process $process
+            try {
+                Start-Process $process
+            }
+            catch {
+                Write-Host "Can't open $process in $projectName" -ForegroundColor Red
+
+            }
         }
     }
 }
