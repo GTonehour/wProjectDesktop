@@ -66,7 +66,7 @@ mkdir "Config"
 ## 🍔 PS Module
 Write-Host "Install VirtualDesktop (will require NuGet, and ask to trust)."
 # 🐑
-# Install-Module VirtualDesktop -Scope CurrentUser # Scoped to user, to avoid needing admin rights.
+Install-Module VirtualDesktop -Scope CurrentUser # Scoped to user, to avoid needing admin rights.
 
 ## 🍔 exe (for direct and quick use in AHK)
 
