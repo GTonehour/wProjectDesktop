@@ -1,4 +1,5 @@
-Set-Location $env:LocalAppData\wProjectDesktop
+	Set-Location $PSScriptRoot # Si wPD_Run_From_Source, peut différer de $env:LocalAppData\wProjectDesktop
+	Set-Location ..
 
 & $env:ahk_wPD .\src\hotkey.ahk
 

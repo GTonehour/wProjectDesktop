@@ -36,6 +36,21 @@ Commands are [configurable], they run located in your project directory: no need
   Set-Location wProjectDesktop
   .\Install.ps1
   ~~~
+## Dev Mode
+- Install (AutoHotkey v2)[www.autohotkey.com/about]
+~~~ps1
+git clone ...
+Set-Location wProjectDesktop
+$env:ahk_wPD = ... # Path to the (AutoHotkey v2)[www.autohotkey.com/about] executable (or run Install.ps1)
+$env:wPD_VirtualDesktop_exe = ... # Path to (VirtualDesktop.exe)[https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe].
+
+.\src\Startup.ps1
+~~~
+
+# Configuration
+Configuration will be in `%LocalAppData%\wProjectDesktop\config` by default. You can set a custom config folder in the `wPD_Home_Config` environment variable.
+
+# FAQ
 > What if I want a dedicated desktop for something with apps but no files, for instance a music player?
 
 Just create an empty "music" directory, as if it was a project. It might sound like a hack, but wProjectDesktop tries to rely on existing OS features instead of introducing specific settings, to be as [thin] as possible.

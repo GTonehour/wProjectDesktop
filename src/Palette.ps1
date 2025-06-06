@@ -1,11 +1,11 @@
 $ErrorActionPreference = "Stop" # Sinon quand plante après installation, par exemple pour une question d'exécutable autohotkey, affiche le fzf comme si de rien était mais sans pouvoir se Hide ni fonctionner.
 
+$wProjectDesktop=(Join-Path $PSScriptRoot "..")
 function Hide-Term {
-    & $env:ahk_wPD "$env:LOCALAPPDATA\wProjectDesktop\src\hideTermStandalone.ahk"
+    & $env:ahk_wPD "$PSScriptRoot\hideTermStandalone.ahk"
 }
 
-$wProjectDesktop="$env:LOCALAPPDATA\wProjectDesktop"
-. $env:LOCALAPPDATA\wProjectDesktop\src\ProjectUtils.ps1
+. $PSScriptRoot\ProjectUtils.ps1
 
 while($true){
     if(-Not $keepOpened){
@@ -40,10 +40,9 @@ while($true){
     $spawnWt = "$wtLocated -p cmdLatte"
     # -w $project # Si on veut nommer une fenêtre dans le but d'y ouvrir d'autres onglets. (Pour le titre, voir --title)
 
-    $wProjectDesktop = "$env:LOCALAPPDATA\wProjectDesktop"
     $PowerShellCmds = @(
         [PSCustomObject]@{Name = "nvim"; Cmd = "$spawnWt --title `"nvim $project`" nvim ."} # project dans le title car si on est amené à déplacer cette fenêtre dans le desktop of another project, on pourra la distinguer de son homologue local.
-        [PSCustomObject]@{Name = "Open recent project (switcher)"; Cmd = ". $wProjectDesktop\src\projectSwitcher.ps1"}
+        [PSCustomObject]@{Name = "Open recent project (switcher)"; Cmd = ". $PSScriptRoot\projectSwitcher.ps1"}
         [PSCustomObject]@{Name = "neovide"; Cmd = "neovide ."}
         [PSCustomObject]@{Name = "WindowsTerminal Powershell"; Cmd = "$wtLocated --title `"Terminal $project`""} # puisque powerLatte est le default profile
         [PSCustomObject]@{Name = "explorer"; Cmd = "explorer ."}
@@ -54,7 +53,7 @@ while($true){
         [PSCustomObject]@{Name = "Quick git push"; Cmd = "git add .; git commit -m `"Quick push`"; git push"}
         [PSCustomObject]@{Name = "ssh port-forwarding PG"; Cmd = "$spawnWt --title `"ssh port-forwarding PG`" ssh -fNL 15432:localhost:5432 mmi@$env:VPS"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
         [PSCustomObject]@{Name = "ssh port-forward HashiCorp Vault"; Cmd = "$spawnWt --title `"ssh port-forwarding HashiCorp Vault`" ssh -NL 8200:localhost:8200 mmi@$env:VPS; Start-Process firefox -ArgumentList https://localhost:8200"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
-        [PSCustomObject]@{Name = "Create new project"; Cmd = ". $wProjectDesktop\src\createNewProject.ps1"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
+        [PSCustomObject]@{Name = "Create new project"; Cmd = ". $PSScriptRoot\createNewProject.ps1"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
         [PSCustomObject]@{Name = "Refresh Rainmeter"; Cmd = ". `"$env:projects\docs\Keep on screen rainmeter skin refresh verif.ps1`""}
         [PSCustomObject]@{Name = "verif_aff"; Cmd = "cd $env:projects\docs ; .\venv\verif\Scripts\Activate.ps1 ; py verif_aff.py ; deactivate"}
     ) | ForEach-Object { $_ | Add-Member -NotePropertyName "Type" -NotePropertyValue "PowerShell" -PassThru }

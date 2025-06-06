@@ -2,7 +2,13 @@
 setlocal enabledelayedexpansion
 
 REM Get current desktop name
-for /f "tokens=*" %%i in ('"%LocalAppData%\wProjectDesktop\bin\VirtualDesktop.exe" /GetCurrentDesktop 2^>nul') do set "output=%%i"
+if defined wPD_VirtualDesktop_exe (
+    set "exe_path=%wPD_VirtualDesktop_exe%"
+) else (
+    set "exe_path=%LocalAppData%\wProjectDesktop\bin\VirtualDesktop.exe"
+)
+
+for /f "tokens=*" %%i in ('"%exe_path%" /GetCurrentDesktop 2^>nul') do set "output=%%i"
 
 REM Extract desktop name from single quotes using string manipulation
 set "desktop_line=%output%"

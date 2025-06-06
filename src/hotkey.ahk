@@ -2,7 +2,7 @@
 #Include constantes.ahk
 
 ; Directly, because initiating powershell was half a second...
-exePath      := EnvGet('LocalAppData') . "\wProjectDesktop\bin\VirtualDesktop.exe"
+exePath := (wPD_exe := EnvGet('wPD_VirtualDesktop_exe')) ? wPD_exe : EnvGet('LocalAppData') . '\wProjectDesktop\bin\VirtualDesktop.exe'
 if !FileExist(exePath)
 {
     MsgBox("Error: VirtualDesktop executable not found at:`n" . exePath, "Script Error", 16)
@@ -50,7 +50,7 @@ switch exitCode {
         MsgBox("Unexpected error: " . exitCode)
 }
 	} else { ; If the user alt+F4d it for some reason
-		RunWait 'powershell.exe -ExecutionPolicy Bypass -File ' . EnvGet("LocalAppData") . '\wProjectDesktop\src\Start-Term.ps1'
+		RunWait 'powershell.exe -ExecutionPolicy Bypass -File ' . EnvGet("A_ScriptDir ") . '\Start-Term.ps1'
 	}
 }
 

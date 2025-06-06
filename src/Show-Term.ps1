@@ -1,3 +1,3 @@
 function Show-Term {
-	& $env:ahk_wPD "$env:LOCALAPPDATA\wProjectDesktop\src\focusTermStandalone.ahk"
+	& $env:ahk_wPD "$PSScriptRoot\focusTermStandalone.ahk"
 }

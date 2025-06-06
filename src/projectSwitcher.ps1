@@ -1,6 +1,6 @@
-. $env:LOCALAPPDATA\wProjectDesktop\src\Show-Term.ps1
-. $env:LOCALAPPDATA\wProjectDesktop\src\New-Project.ps1 # Absolu
-. $env:LOCALAPPDATA\wProjectDesktop\src\ProjectUtils.ps1
+. $PSScriptRoot\Show-Term.ps1
+. $PSScriptRoot\New-Project.ps1 # Absolu
+. $PSScriptRoot\ProjectUtils.ps1
 
 $projectList = Get-ProjectList
 

@@ -2,6 +2,7 @@ param(
     [string]$TaskName = "wProjectSetup"
 )
 $ErrorActionPreference = "Stop"
+Set-Location $PSScriptRoot # Might be ran from somewhere else.
 . .\resources\Download-VerifiedExecutable.ps1
 . .\resources\Find-AutoHotkey.ps1
 
