@@ -2,6 +2,7 @@ $ProjectConfigs = @{
     'work' = @{
         sites = @(
             'https://mail.telamon.eu/',
+            'https://barttelamon.atlassian.net/jira/software/c/projects/BK/boards/10',
             'https://mattermost.telamon.eu/'
         )
         processes = @(
@@ -9,17 +10,23 @@ $ProjectConfigs = @{
         )
     }
     'music' = @{
-        sites = @(
-            'https://music.youtube.com'
-        )
-        processes = @()
+        # sites = @(
+        #     'https://music.youtube.com'
+        # )
+        commands = @(
+			# J'avais tendance à ouvrir d'autres onglets dans ce Chrome "music"...
+			"& `"C:\Program Files\Google\Chrome\Application\chrome_proxy.exe`"  --profile-directory=Default --app-id=cinhimbnkkaeohfgghhklpknlkffjgod"
+		)
     }
     'docs' = @{
         sites = @()
         processes = @(
             'Thunderbird'
-			,"C:\Program Files\WindowsApps\5319275A.WhatsAppDesktop_2.2518.3.0_x64__cv1g1gvanyjgm\WhatsApp.exe" # Seriously winget? J'imagine que sera différent la prochaine fois... chercher, alors.
         )
+		commands = @(
+			# Pas dans processes car winget mets dans un chemin qui change à chaque montée de version, par exemple "C:\Program Files\WindowsApps\5319275A.WhatsAppDesktop_2.2518.3.0_x64__cv1g1gvanyjgm\WhatsApp.exe". A la main depuis le site c'est encore pire, même admin n'a pas accès au dossier. Et WhatsApp ne support plus scoop. On pourrait Get-ChildItem dans C:\Program Files\WindowsApps, mais nécessite admin... Et Whatsapp n'est dans les Start Menu\Programs de AppData ni de C:\ProgramData.
+			"& `"$env:projects\wProjectDesktop\src\RunWingetApp_WhatsApp.ps1`""
+		)
     }
 }
 function New-Project {
@@ -41,6 +48,10 @@ function New-Project {
                 Write-Host "Can't open $process in $projectName" -ForegroundColor Red
 
             }
+        }
+        foreach ($command in $config.commands) {
+            # Directly invoke command as a string to allow arguments
+            Invoke-Expression $command
         }
     }
 }
