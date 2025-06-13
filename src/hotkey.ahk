@@ -18,7 +18,9 @@ SwitchToDesktop(desktopName)
     Run(exePath . ' /Switch:"' . desktopName . '"', , "Hide")
 }
 
-RingFile := "2"
+; 1 est convivial mais complexe, et finit en quinte.
+; 3 est trop long.
+RingFile := "1"
 ; RingFile := "ding"
 Ring := FileRead("..\Sounds\" . RingFile . ".wav", "RAW")
 PlaySound(Sound) {
@@ -49,8 +51,13 @@ switch exitCode {
     default:
         MsgBox("Unexpected error: " . exitCode)
 }
-	} else { ; If the user alt+F4d it for some reason
-		RunWait 'powershell.exe -ExecutionPolicy Bypass -File ' . EnvGet("A_ScriptDir ") . '\Start-Term.ps1'
-	}
+} else { ; If the user alt+F4d it for some reason
+    ps1Path := EnvGet("A_LocalAppData") . '\wProjectDesktop\Start-Term.ps1'
+    if FileExist(ps1Path) {
+        RunWait 'powershell.exe -ExecutionPolicy Bypass -File ' . ps1Path
+    } else {
+        MsgBox("wProjectDesktop not installed.") ; Typiquement si on n'avait lancé qu'en DevMode.
+    }
+}
 }
 

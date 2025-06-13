@@ -3,8 +3,9 @@ param(
 )
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot # Might be ran from somewhere else.
-. .\resources\Download-VerifiedExecutable.ps1
-. .\resources\Find-AutoHotkey.ps1
+. .\install_res\Download-VerifiedExecutable.ps1
+. .\install_res\Find-AutoHotkey.ps1
+. .\install_res\Register-Startup.ps1
 
 Push-Location # On fait des Set-Location pour simplifier ce script, mais c'est perturbant pour l'utilisateur de finir ailleurs que là où il a lancé .\Install.ps1.
 
@@ -93,15 +94,7 @@ Write-Host "Creating startup task: $TaskName" -ForegroundColor Green
 
 Set-Location ..\src # Pour Startup.ps1
 
-# Register-ScheduledTask, schtasks with BootTrigger, all require admin rights. We try not to require admin rights. We could also `copy "startup.bat" "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\"`.
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "wProjectStartup" /d "PowerShell.exe -ExecutionPolicy Bypass -File `"$StartupFile`""
-
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "Successfully registered startup task" -ForegroundColor Green
-}
-else {
-    throw "Failed to register startup task (exit code: $LASTEXITCODE)"
-}
+Register-Startup $StartupFile
 
 # Start the application immediately (don't wait for next login)
 Write-Host "Starting application..." -ForegroundColor Green
