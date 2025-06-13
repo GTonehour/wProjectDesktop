@@ -41,10 +41,14 @@ Commands are [configurable], they run located in your project directory: no need
 ~~~ps1
 git clone ...
 Set-Location wProjectDesktop
-$env:ahk_wPD = ... # Path to the (AutoHotkey v2)[www.autohotkey.com/about] executable (or run Install.ps1)
-$env:wPD_VirtualDesktop_exe = ... # Path to (VirtualDesktop.exe)[https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe].
+[Environment]::SetEnvironmentVariable("ahk_wPD", ..., "User") # Path to the (AutoHotkey v2)[www.autohotkey.com/about] executable (or run Install.ps1)
+[Environment]::SetEnvironmentVariable("wPD_VirtualDesktop_exe", ..., "User") # Path to (VirtualDesktop.exe)[https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe].
 
-.\src\Startup.ps1
+# Run once
+.\DevMode.ps1
+
+# ... or schedule for startup.
+.\DevModeSchedule.ps1
 ~~~
 
 # Configuration
