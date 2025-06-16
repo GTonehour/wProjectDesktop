@@ -13,7 +13,6 @@ $InstallDir = "$env:LOCALAPPDATA\wProjectDesktop"
 $StartupFile = "Startup.ps1"
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$SourceDir = Join-Path -Path $ScriptDir -ChildPath "src"
 
 # 🍔 AutoHotkey. Avant le reste, car l'utilisateur pourra vouloir arrêter la procédure le temps de télécharger ahk.
 # Here rather than at runtime, because multiple ways to find the ahk paths, so too heavy for runtime.
@@ -56,8 +55,9 @@ Set-Location $InstallDir
 
 # Copy entire project to installation directory
 Write-Host "Copying project files to: $InstallDir" -ForegroundColor Green
-Copy-Item "$SourceDir" .\src -Recurse -Force
+Copy-Item "$SourceDir\src" .\src -Recurse -Force
 Copy-Item "$ScriptDir\Sounds" .\Sounds -Recurse -Force
+Copy-Item "$ScriptDir\DefaultPalette" .\DefaultPalette -Recurse -Force
 Copy-Item -Path "$ScriptDir\Uninstall.ps1" -Destination . -Force # On ne le mets pas dans src, pour qu'il soit visible de quelqu'un qui le chercherait dans le dossier cloné ; mais on le copie quand même, pour qu'il puisse être trouvé là-bas.
 Write-Host "Successfully copied all project files" -ForegroundColor Green
 

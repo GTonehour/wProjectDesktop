@@ -40,31 +40,32 @@ while($true){
     $spawnWt = "$wtLocated -p cmdLatte"
     # -w $project # Si on veut nommer une fenêtre dans le but d'y ouvrir d'autres onglets. (Pour le titre, voir --title)
 
-    $PowerShellCmds = @(
-        [PSCustomObject]@{Name = "nvim"; Cmd = "$spawnWt --title `"nvim $project`" nvim ."} # project dans le title car si on est amené à déplacer cette fenêtre dans le desktop of another project, on pourra la distinguer de son homologue local.
-        [PSCustomObject]@{Name = "Open recent project (switcher)"; Cmd = ". $PSScriptRoot\projectSwitcher.ps1"}
-        [PSCustomObject]@{Name = "neovide"; Cmd = "neovide ."}
-        [PSCustomObject]@{Name = "WindowsTerminal Powershell"; Cmd = "$wtLocated --title `"Terminal $project`""} # puisque powerLatte est le default profile
-        [PSCustomObject]@{Name = "explorer"; Cmd = "explorer ."}
-        [PSCustomObject]@{Name = "code"; Cmd = "code ."}
-        [PSCustomObject]@{Name = "lazygit"; Cmd = "$spawnWt --title `"lazygit $project`" lazygit"}
-        [PSCustomObject]@{Name = "yazi"; Cmd = "$spawnWt --title `"yazi $project`" yazi ."}
-        [PSCustomObject]@{Name = "gitk"; Cmd = "gitk --all"} # Aussi dans lazygit, 'a' dans le [1]
-        [PSCustomObject]@{Name = "Quick git push"; Cmd = "git add .; git commit -m `"Quick push`"; git push"}
-        [PSCustomObject]@{Name = "ssh port-forwarding PG"; Cmd = "$spawnWt --title `"ssh port-forwarding PG`" ssh -fNL 15432:localhost:5432 mmi@$env:VPS"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
-        [PSCustomObject]@{Name = "ssh port-forward HashiCorp Vault"; Cmd = "$spawnWt --title `"ssh port-forwarding HashiCorp Vault`" ssh -NL 8200:localhost:8200 mmi@$env:VPS; Start-Process firefox -ArgumentList https://localhost:8200"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
-        [PSCustomObject]@{Name = "Create new project"; Cmd = ". $PSScriptRoot\createNewProject.ps1"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
-        [PSCustomObject]@{Name = "Refresh Rainmeter"; Cmd = ". `"$env:projects\docs\Keep on screen rainmeter skin refresh verif.ps1`""}
-        [PSCustomObject]@{Name = "verif_aff"; Cmd = "cd $env:projects\docs ; .\venv\verif\Scripts\Activate.ps1 ; py verif_aff.py ; deactivate"}
-        [PSCustomObject]@{Name = "WSL"; Cmd = "$wtLocated -p Ubuntu --title WSL"}
-        [PSCustomObject]@{Name = "Claude Code"; Cmd = "$spawnWt --title `"Claude Code`" wsl bash -i -c `"claude`""}
-    ) | ForEach-Object { $_ | Add-Member -NotePropertyName "Type" -NotePropertyValue "PowerShell" -PassThru }
-
-    $BashCmds = @(
-        [PSCustomObject]@{Name = "git init --bare & first push"; Cmd = "$env:PROJECTS/docs/git push initialize remote bare.sh"}
-    ) | ForEach-Object { $_ | Add-Member -NotePropertyName "Type" -NotePropertyValue "Bash" -PassThru }
-
-    $cmds = $PowerShellCmds + $BashCmds
+    # Load commands from DefaultPalette folder
+    $defaultPalettePath = Join-Path $wProjectDesktop "DefaultPalette"
+    $cmds = @()
+    
+    if (Test-Path $defaultPalettePath) {
+        $scriptFiles = Get-ChildItem -Path $defaultPalettePath -File
+        
+        foreach ($file in $scriptFiles) {
+            $name = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
+            $extension = $file.Extension.ToLower()
+            
+            if ($extension -eq ".ps1") {
+                $cmds += [PSCustomObject]@{
+                    Name = $name
+                    ScriptPath = $file.FullName
+                    Type = "PowerShell"
+                }
+            } elseif ($extension -eq ".sh") {
+                $cmds += [PSCustomObject]@{
+                    Name = $name
+                    ScriptPath = $file.FullName
+                    Type = "Bash"
+                }
+            }
+        }
+    }
 
     $switchedKey = 'f12'
 
@@ -80,14 +81,18 @@ while($true){
             $keepOpened=$true
         } else {
             $selectedCmd = $cmds | Where-Object {$_.Name -eq $Name[1]}
-            Write-Host "``$($selectedCmd.Cmd)``..." # Rassure le temps que neovide, par exemple, s'ouvre.
+            Write-Host "``$($selectedCmd.Name)``..." # Rassure le temps que neovide, par exemple, s'ouvre.
             if ($selectedCmd.Type -eq "Bash") {
-                # Dans un vrai terminal bash pour pouvoir faire des choses interactives, voir les messages d'erreurs, etc. Mais on remettra aussi l'autre option
-                wt -p "Git Bash" --title Bash --appendCommandLine $selectedCmd.Cmd
+                # Source the script and call invoke_command function
+                $bashScript = "source '$($selectedCmd.ScriptPath)'; invoke_command '$project' '$spawnWt' '$projectPath' '$wtLocated'"
+                wt -p "Git Bash" --title Bash --appendCommandLine $bashScript
             } elseif ($selectedCmd.Type -eq "PowerShell") {
-                Invoke-Expression $selectedCmd.Cmd -ErrorVariable cmdError
-                if ($cmdError) {
-                    Write-Host "Command failed." -ForegroundColor Red
+                try {
+                    # Source the script and call Invoke-Command function
+                    . $selectedCmd.ScriptPath
+                    Invoke-Command -project $project -spawnWt $spawnWt -projectPath $projectPath -wtLocated $wtLocated
+                } catch {
+                    Write-Host "Command failed: $($_.Exception.Message)" -ForegroundColor Red
                     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
                 }
             }
