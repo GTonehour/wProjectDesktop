@@ -56,6 +56,8 @@ while($true){
         [PSCustomObject]@{Name = "Create new project"; Cmd = ". $PSScriptRoot\createNewProject.ps1"} # La fenêtre va se fermer, même alors que la commande s'est bien lancée et reste active.
         [PSCustomObject]@{Name = "Refresh Rainmeter"; Cmd = ". `"$env:projects\docs\Keep on screen rainmeter skin refresh verif.ps1`""}
         [PSCustomObject]@{Name = "verif_aff"; Cmd = "cd $env:projects\docs ; .\venv\verif\Scripts\Activate.ps1 ; py verif_aff.py ; deactivate"}
+        [PSCustomObject]@{Name = "WSL"; Cmd = "$wtLocated -p Ubuntu --title WSL"}
+        [PSCustomObject]@{Name = "Claude Code"; Cmd = "$spawnWt --title `"Claude Code`" wsl bash -i -c `"claude`""}
     ) | ForEach-Object { $_ | Add-Member -NotePropertyName "Type" -NotePropertyValue "PowerShell" -PassThru }
 
     $BashCmds = @(
