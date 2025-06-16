@@ -7,6 +7,21 @@ function Hide-Term {
 
 . $PSScriptRoot\ProjectUtils.ps1
 
+function Update-MRU {
+    param([string]$ScriptName)
+    $mruPath = Join-Path $wProjectDesktop "State\MRU\$ScriptName.txt"
+    Set-Content -Path $mruPath -Value (Get-Date).ToString('yyyy-MM-dd HH:mm:ss') -NoNewline
+}
+
+function Get-MRUTimestamp {
+    param([string]$ScriptName)
+    $mruPath = Join-Path $wProjectDesktop "State\MRU\$ScriptName.txt"
+    if (Test-Path $mruPath) {
+        return [DateTime]::Parse((Get-Content $mruPath))
+    }
+    return $null
+}
+
 while($true){
     if(-Not $keepOpened){
         Hide-Term
@@ -52,18 +67,31 @@ while($true){
             $extension = $file.Extension.ToLower()
             
             if ($extension -eq ".ps1") {
+                $mruTimestamp = Get-MRUTimestamp -ScriptName $name
                 $cmds += [PSCustomObject]@{
                     Name = $name
                     ScriptPath = $file.FullName
                     Type = "PowerShell"
+                    MRUTimestamp = $mruTimestamp
                 }
             } elseif ($extension -eq ".sh") {
+                $mruTimestamp = Get-MRUTimestamp -ScriptName $name
                 $cmds += [PSCustomObject]@{
                     Name = $name
                     ScriptPath = $file.FullName
                     Type = "Bash"
+                    MRUTimestamp = $mruTimestamp
                 }
             }
+        }
+        
+        # Sort commands: MRU first (most recent first), then alphabetically for untracked
+        $cmds = $cmds | Sort-Object @{
+            Expression = { if ($_.MRUTimestamp) { 0 } else { 1 } }
+        }, @{
+            Expression = { if ($_.MRUTimestamp) { -$_.MRUTimestamp.Ticks } else { 0 } }
+        }, @{
+            Expression = { $_.Name }
         }
     }
 
@@ -81,6 +109,7 @@ while($true){
             $keepOpened=$true
         } else {
             $selectedCmd = $cmds | Where-Object {$_.Name -eq $Name[1]}
+            Update-MRU -ScriptName $selectedCmd.Name
             Write-Host "``$($selectedCmd.Name)``..." # Rassure le temps que neovide, par exemple, s'ouvre.
             if ($selectedCmd.Type -eq "Bash") {
                 # Source the script and call invoke_command function

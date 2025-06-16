@@ -62,6 +62,7 @@ Copy-Item -Path "$ScriptDir\Uninstall.ps1" -Destination . -Force # On ne le mets
 Write-Host "Successfully copied all project files" -ForegroundColor Green
 
 mkdir "State"
+mkdir "State\MRU"
 mkdir "Config"
 
 # 🍔 MScholtes/VirtualDesktop dependency
