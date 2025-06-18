@@ -1,6 +1,5 @@
-Set-Location $PSScriptRoot
 . .\install_res\Register-Startup.ps1
-Register-Startup DevMode.ps1
+Register-Startup $PSScriptRoot\DevMode.ps1
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "Successfully registered startup task" -ForegroundColor Green
@@ -11,5 +10,5 @@ else {
 
 $response = Read-Host "Run now? (y/n)"
 if ($response -eq "y" -or $response -eq "yes") {
-.\DevMode.ps1
+	& $PSScriptRoot\DevMode.ps1
 }
