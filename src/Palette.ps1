@@ -102,7 +102,7 @@ while($true){
     # Dans les deux cas on peut rester dans un état incohérent. Certes le scénario le moins probable est le 2 (car suppose A->B->A plutôt que A->B->CdontA), MAIS on préfère avoir un state pour le tout premier après Startup.
     Set-Content -Path $wProjectDesktop\State\CurrentProject.txt -Value $project -NoNewline
 
-    $Name = $cmds | ForEach-Object {$_.Name} | fzf.exe --prompt "$projectToDisplay > " --bind one:accept --cycle --expect=$switchedKey
+    $Name = $cmds | ForEach-Object {$_.Name} | fzf.exe --prompt "$projectToDisplay > " --cycle --expect=$switchedKey # Pas `--bind one:accept`. Sinon par exemple pour aller à "lazygit" je tapais "laz" qui ouvrait lazygit, puis "ygit"... qui l'ouvrait à nouveau.
 
     if ($Name.Count -eq 2) { # Aura toujours deux valeurs (0 si on a escaped), à cause de mon expect. Mais la première ne sera remplie (de switchedKey) que si j'ai appuyé cette dernière.
         if ($Name[0] -eq $switchedKey) {
