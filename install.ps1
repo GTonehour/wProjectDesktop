@@ -55,7 +55,7 @@ Set-Location $InstallDir
 
 # Copy entire project to installation directory
 Write-Host "Copying project files to: $InstallDir" -ForegroundColor Green
-Copy-Item "$SourceDir\src" .\src -Recurse -Force
+Copy-Item "$ScriptDir\src" .\src -Recurse -Force
 Copy-Item "$ScriptDir\Sounds" .\Sounds -Recurse -Force
 Copy-Item "$ScriptDir\DefaultPalette" .\DefaultPalette -Recurse -Force
 Copy-Item -Path "$ScriptDir\Uninstall.ps1" -Destination . -Force # On ne le mets pas dans src, pour qu'il soit visible de quelqu'un qui le chercherait dans le dossier cloné ; mais on le copie quand même, pour qu'il puisse être trouvé là-bas.
@@ -95,6 +95,7 @@ Write-Host "Creating startup task: $TaskName" -ForegroundColor Green
 
 Set-Location ..\src # Pour Startup.ps1
 
+# Après avoir lancé. Sinon avec l'option fast on affichait la fenêtre admin, puis notre programme se lançait et déplaçait vers d'autres bureaux (si certains étaient ouverts avec déjà des paramétrages d'apps... ce qui serait bizarre puisqu'on n'en est qu'à l'install... et puis d'ailleurs non, on ne veut pas que la présente exécution du Register-Startup soit cachée par un tel déplacement.) Doncnon, avant d'avoir lancé.
 Register-Startup $StartupFile
 
 # Start the application immediately (don't wait for next login)
