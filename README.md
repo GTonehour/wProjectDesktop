@@ -36,6 +36,20 @@ Commands are [configurable], they run located in your project directory: no need
   Set-Location wProjectDesktop
   .\Install.ps1
   ~~~
+
+# Configuration
+Configuration will be in `%LocalAppData%\wProjectDesktop\config` by default. You can set a custom config folder in the `wPD_Home_Config` environment variable.
+
+# FAQ
+> What if I want a dedicated desktop for something with apps but no files, for instance a music player?
+
+Just create an empty "music" directory, as if it was a project. It might sound like a hack, but wProjectDesktop tries to rely on existing OS features instead of introducing specific settings, to be as [thin] as possible.
+
+# Development
+## Install
+~~~ps1
+Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
+~~~
 ## Dev Mode
 - Install (AutoHotkey v2)[www.autohotkey.com/about]
 ~~~ps1
@@ -50,12 +64,4 @@ Set-Location wProjectDesktop
 # ... or schedule for startup.
 .\DevModeSchedule.ps1
 ~~~
-
-# Configuration
-Configuration will be in `%LocalAppData%\wProjectDesktop\config` by default. You can set a custom config folder in the `wPD_Home_Config` environment variable.
-
-# FAQ
-> What if I want a dedicated desktop for something with apps but no files, for instance a music player?
-
-Just create an empty "music" directory, as if it was a project. It might sound like a hack, but wProjectDesktop tries to rely on existing OS features instead of introducing specific settings, to be as [thin] as possible.
 
