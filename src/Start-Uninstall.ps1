@@ -45,5 +45,18 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "Startup registry entry not found (may already be removed)" -ForegroundColor Yellow
 }
 
+# Remove scheduled task (if it exists)
+Write-Host "Checking for scheduled task..." -ForegroundColor Gray
+schtasks /query /tn "\wProjectDesktop\wProjectDesktop_Startup" 2>$null
+
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "Scheduled task found. Removing (requires admin)..." -ForegroundColor Yellow
+    $command = "schtasks /delete /tn `"\wProjectDesktop\wProjectDesktop_Startup`" /f"
+    Start-Process powershell -Verb RunAs -ArgumentList "-NoExit", "-Command", $command
+    Write-Host "Admin prompt opened. Please complete the task deletion." -ForegroundColor Yellow
+} else {
+    Write-Host "Scheduled task not found (may already be removed)" -ForegroundColor Yellow
+}
+
 Write-Host "Uninstall completed" -ForegroundColor Green
 Write-Host "Note: Any running wProjectDesktop processes must be manually terminated"
