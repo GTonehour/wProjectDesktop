@@ -1,5 +1,6 @@
 param(
-    [string]$TaskName = "wProjectSetup"
+    [string]$TaskName = "wProjectSetup",
+    [string]$customConfig = ""
 )
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot # Might be ran from somewhere else.
@@ -63,7 +64,6 @@ Write-Host "Successfully copied all project files" -ForegroundColor Green
 
 mkdir "State"
 mkdir "State\MRU"
-mkdir "Config"
 
 # 🍔 MScholtes/VirtualDesktop dependency
 ## 🍔 PS Module
@@ -103,13 +103,25 @@ Write-Host "Starting application..." -ForegroundColor Green
 Start-Process PowerShell.exe -ArgumentList "-ExecutionPolicy", "Bypass", "-File", "`"$StartupFile`"" -WindowStyle Hidden
 Write-Host "Application started successfully" -ForegroundColor Green
 
-if (-not $env:wPD_Config_Home) {
-	$default_config_home = "$env:LocalAppData\wProjectDesktop\config"
-# Car le env ne deviendra valide qu'après refresh du shell...
-	$env:wPD_Config_Home = $default_config_home
-	Write-Host "The wPD_Config_Home environment variable wasn't assigned. Assigned to $default_Config_Home by default."
-}else{
-        Write-Host "wPD_Config_Home environment variable detected: $env:wPR_Config_Home" -ForegroundColor Green
+# Set up custom config path
+if ($customConfig) {
+    $configPath = $customConfig
+    Write-Host "Using custom config path: $configPath"
+} else {
+    $configPath = "$env:LocalAppData\wProjectDesktop\config"
+    Write-Host "Using default config path: $configPath" -ForegroundColor Green
 }
+
+# Create config directory if it doesn't exist
+if (-not (Test-Path $configPath)) {
+    New-Item -ItemType Directory -Path $configPath -Force | Out-Null
+'[{"Name": "wProjectDesktop Install folder", "Path": "' + $configPath.Replace('\', '\\') + '"}]' | Out-File -FilePath $configPath\projects.json -Force -Encoding UTF8
+    Write-Host "Created config directory: $configPath" -ForegroundColor Green
+}
+
+# Store the config path in configPath.txt
+$configPathFile = "$InstallDir\configPath.txt"
+$configPath | Out-File -FilePath $configPathFile -Encoding UTF8
+Write-Host "Config path stored in: $configPathFile" -ForegroundColor Green
 
 Pop-Location # Voir Push-Location plus haut.

@@ -35,10 +35,12 @@ Commands are [configurable], they run located in your project directory: no need
   git clone ...
   Set-Location wProjectDesktop
   .\Install.ps1
+  # Or with custom config path:
+  .\Install.ps1 -customConfig "C:\MyCustomConfig"
   ~~~
 
 # Configuration
-Configuration will be in `%LocalAppData%\wProjectDesktop\config` by default. You can set a custom config folder in the `wPD_Home_Config` environment variable.
+Configuration will be in `%LocalAppData%\wProjectDesktop\config` by default. You can specify a custom config path using the `-customConfig` parameter during installation (e.g., `.\Install.ps1 -customConfig "C:\MyCustomConfig"`).
 
 # FAQ
 > What if I want a dedicated desktop for something with apps but no files, for instance a music player?
