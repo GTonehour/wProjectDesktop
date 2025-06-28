@@ -58,12 +58,17 @@ while($true){
     $spawnWt = "$wtLocated -p cmdLatte"
     # -w $project # Si on veut nommer une fenêtre dans le but d'y ouvrir d'autres onglets. (Pour le titre, voir --title)
 
-    # Load commands from DefaultPalette folder
+    # Load commands from DefaultPalette and config/Palette folders
     $defaultPalettePath = Join-Path $wProjectDesktop "DefaultPalette"
-    $cmds = @()
+    $configPath = Get-ConfigPath
+    $configPalettePath = Join-Path $configPath "Palette"
+$cmds = [System.Collections.ArrayList]@()
     
-    if (Test-Path $defaultPalettePath) {
-        $scriptFiles = Get-ChildItem -Path $defaultPalettePath -File
+    # Function to load scripts from a directory
+    function Load-ScriptsFromDirectory {
+        param([string]$Path, [string]$Source)
+        
+        $scriptFiles = Get-ChildItem -Path $Path -File
         
         foreach ($file in $scriptFiles) {
             $name = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
@@ -71,31 +76,43 @@ while($true){
             
             if ($extension -eq ".ps1") {
                 $mruTimestamp = Get-MRUTimestamp -ScriptName $name
-                $cmds += [PSCustomObject]@{
+$null = $cmds.Add([PSCustomObject]@{
                     Name = $name
                     ScriptPath = $file.FullName
                     Type = "PowerShell"
                     MRUTimestamp = $mruTimestamp
-                }
+                    Source = $Source
+                })
             } elseif ($extension -eq ".sh") {
                 $mruTimestamp = Get-MRUTimestamp -ScriptName $name
-                $cmds += [PSCustomObject]@{
+$null = $cmds.Add([PSCustomObject]@{
                     Name = $name
                     ScriptPath = $file.FullName
                     Type = "Bash"
                     MRUTimestamp = $mruTimestamp
-                }
+                    Source = $Source
+                })
             }
         }
-        
-        # Sort commands: MRU first (most recent first), then alphabetically for untracked
-        $cmds = $cmds | Sort-Object @{
-            Expression = { if ($_.MRUTimestamp) { 0 } else { 1 } }
-        }, @{
-            Expression = { if ($_.MRUTimestamp) { -$_.MRUTimestamp.Ticks } else { 0 } }
-        }, @{
-            Expression = { $_.Name }
-        }
+    }
+    
+    # Load from DefaultPalette (starter pack)
+    Load-ScriptsFromDirectory -Path $defaultPalettePath -Source "Default"
+    
+    # Load from config/Palette (user scripts) - these will override defaults with same name
+    Load-ScriptsFromDirectory -Path $configPalettePath -Source "Config"
+    
+    # Remove default scripts if custom ones with same name exist
+    $customNames = ($cmds | Where-Object { $_.Source -eq "Config" }).Name
+    $cmds = $cmds | Where-Object { $_.Source -eq "Config" -or $_.Name -notin $customNames }
+    
+    # Sort commands: MRU first (most recent first), then alphabetically for untracked
+    $cmds = $cmds | Sort-Object @{
+        Expression = { if ($_.MRUTimestamp) { 0 } else { 1 } }
+    }, @{
+        Expression = { if ($_.MRUTimestamp) { -$_.MRUTimestamp.Ticks } else { 0 } }
+    }, @{
+        Expression = { $_.Name }
     }
 
     $switchedKey = 'f12'

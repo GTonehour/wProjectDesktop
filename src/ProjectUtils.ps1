@@ -1,8 +1,12 @@
+function Get-ConfigPath {
+    $installDir = "$env:LocalAppData\wProjectDesktop"
+    $configPathFile = "$installDir\configPath.txt"
+    $configPath = Get-Content $configPathFile -Raw | ForEach-Object { $_.Trim() }
+    return $configPath
+}
+
 function Get-ProjectList {
-# Read config path from configPath.txt
-$installDir = "$env:LocalAppData\wProjectDesktop"
-$configPathFile = "$installDir\configPath.txt"
-$configDir = Get-Content $configPathFile -Raw | ForEach-Object { $_.Trim() }
+$configDir = Get-ConfigPath
 $configPath = "$configDir\projects.json"
 
 if (-not (Test-Path $configPath)) {

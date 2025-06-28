@@ -172,7 +172,8 @@ if ($customConfig) {
 
 # Create config directory if it doesn't exist
 if (-not (Test-Path $configPath)) {
-    New-Item -ItemType Directory -Path $configPath -Force | Out-Null
+    New-Item -ItemType Directory -Path $configPath | Out-Null
+    New-Item -ItemType Directory -Path (Join-Path $configPath "Palette") | Out-Null
 '[{"Name": "wProjectDesktop Install folder", "Path": "' + $configPath.Replace('\', '\\') + '"}]' | Out-File -FilePath $configPath\projects.json -Force -Encoding UTF8
     Write-Host "Created config directory: $configPath" -ForegroundColor Green
 }
