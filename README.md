@@ -61,7 +61,13 @@ Set-Location wProjectDesktop
 [Environment]::SetEnvironmentVariable("wPD_VirtualDesktop_exe", ..., "User") # Path to (VirtualDesktop.exe)[https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe].
 
 # Run once
+~~~ps1
 .\DevMode.ps1
+~~~
+Or if you want to test the terminal without the initial Destkop initialization:
+~~~ps1
+.\src\Start-Term.ps1
+~~~
 
 # ... or schedule for startup.
 .\DevModeSchedule.ps1
