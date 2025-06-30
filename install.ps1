@@ -1,6 +1,7 @@
 param(
     [string]$TaskName = "wProjectSetup",
     [string]$customConfig = ""
+    [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot # Might be ran from somewhere else.
@@ -18,6 +19,12 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 # 🍔 AutoHotkey. Avant le reste, car l'utilisateur pourra vouloir arrêter la procédure le temps de télécharger ahk.
 # Here rather than at runtime, because multiple ways to find the ahk paths, so too heavy for runtime.
 $autoHotkeyPath = Find-AutoHotkeyPath
+if ($DryRun) {
+    Write-Host "[DRY RUN] Would find AutoHotkey path" -ForegroundColor Cyan
+    $autoHotkeyPath = "C:\Program Files\AutoHotkey\AutoHotkey.exe"  # Mock path for dry run
+} else {
+    $autoHotkeyPath = Find-AutoHotkeyPath
+}
 
 if ($autoHotkeyPath) {
     Write-Host ""
@@ -26,7 +33,11 @@ if ($autoHotkeyPath) {
     # Only prompt to save if it wasn't already from environment variable
     $existingEnvVar = [Environment]::GetEnvironmentVariable("ahk_wPD", "User")
     if (-not $existingEnvVar -or $existingEnvVar -ne $autoHotkeyPath) {
-        Set-AutoHotkeyEnvironmentVariable -AhkPath $autoHotkeyPath
+        if ($DryRun) {
+            Write-Host "[DRY RUN] Would set AutoHotkey environment variable to: $autoHotkeyPath" -ForegroundColor Cyan
+        } else {
+            Set-AutoHotkeyEnvironmentVariable -AhkPath $autoHotkeyPath
+        }
     }
     
     # Test the executable
@@ -47,12 +58,20 @@ else {
 }
 
 # 🍔 Create install installation directory
-if (-not (Test-Path $InstallDir)) {
-    New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
-    Write-Host "Created installation directory: $InstallDir" -ForegroundColor Green
+if ($DryRun) {
+    Write-Host "[DRY RUN] Would create installation directory: $InstallDir" -ForegroundColor Cyan
+} else {
+    if (-not (Test-Path $InstallDir)) {
+        New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+        Write-Host "Created installation directory: $InstallDir" -ForegroundColor Green
+    }
 }
 
-Set-Location $InstallDir
+if ($DryRun) {
+    Write-Host "[DRY RUN] Would change to installation directory: $InstallDir" -ForegroundColor Cyan
+} else {
+    Set-Location $InstallDir
+}
 
 # Copy entire project to installation directory
 Write-Host "Copying project files to: $InstallDir" -ForegroundColor Green
@@ -64,12 +83,35 @@ Write-Host "Successfully copied all project files" -ForegroundColor Green
 
 mkdir "State"
 mkdir "State\MRU"
+if ($DryRun) {
+    Write-Host "[DRY RUN] Would copy project files to: $InstallDir" -ForegroundColor Cyan
+    Write-Host "[DRY RUN] Would copy: src, Sounds, DefaultPalette, Uninstall.ps1" -ForegroundColor Cyan
+} else {
+    Write-Host "Copying project files to: $InstallDir" -ForegroundColor Green
+    Copy-Item "$SourceDir\src" .\src -Recurse -Force
+    Copy-Item "$ScriptDir\Sounds" .\Sounds -Recurse -Force
+    Copy-Item "$ScriptDir\DefaultPalette" .\DefaultPalette -Recurse -Force
+    Copy-Item -Path "$ScriptDir\Uninstall.ps1" -Destination . -Force # On ne le mets pas dans src, pour qu'il soit visible de quelqu'un qui le chercherait dans le dossier cloné ; mais on le copie quand même, pour qu'il puisse être trouvé là-bas.
+    Write-Host "Successfully copied all project files" -ForegroundColor Green
+}
+
+if ($DryRun) {
+    Write-Host "[DRY RUN] Would create directories: State, State\MRU, Config" -ForegroundColor Cyan
+} else {
+    mkdir "State"
+    mkdir "State\MRU"
+    mkdir "Config"
+}
 
 # 🍔 MScholtes/VirtualDesktop dependency
 ## 🍔 PS Module
 Write-Host "Install VirtualDesktop (will require NuGet, and ask to trust)."
 # 🐑
-Install-Module VirtualDesktop -Scope CurrentUser # Scoped to user, to avoid needing admin rights.
+if ($DryRun) {
+    Write-Host "[DRY RUN] Would install VirtualDesktop PowerShell module" -ForegroundColor Cyan
+} else {
+    Install-Module VirtualDesktop -Scope CurrentUser # Scoped to user, to avoid needing admin rights.
+}
 
 ## 🍔 exe (for direct and quick use in AHK)
 
@@ -79,29 +121,45 @@ Install-Module VirtualDesktop -Scope CurrentUser # Scoped to user, to avoid need
 # * add 150 Kb to our repo
 # + but users could ensure we're actually downloading from a legitimate repo without having to calculate both cheksums.
 # Let's favor security.
-mkdir "bin"
-Set-Location bin
+if ($DryRun) {
+    Write-Host "[DRY RUN] Would create bin directory and change to it" -ForegroundColor Cyan
+} else {
+    mkdir "bin"
+    Set-Location bin
+}
 
 # 🐑
 $virtualDesktopPath = "VirtualDesktop.exe"
-Download-VerifiedExecutable -Name "MScholtes/VirtualDesktop executable" `
-    -Url "https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe" `
-    -OutputPath $virtualDesktopPath `
-    -ExpectedChecksum "F3799B4A542BAD7F0F2267E224BF6885F0599E444EF58394D449FD30269E3014"
+if ($DryRun) {
+    Write-Host "[DRY RUN] Would download VirtualDesktop.exe from GitHub" -ForegroundColor Cyan
+    Write-Host "[DRY RUN] Would verify checksum: F3799B4A542BAD7F0F2267E224BF6885F0599E444EF58394D449FD30269E3014" -ForegroundColor Cyan
+} else {
+    Download-VerifiedExecutable -Name "MScholtes/VirtualDesktop executable" `
+        -Url "https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe" `
+        -OutputPath $virtualDesktopPath `
+        -ExpectedChecksum "F3799B4A542BAD7F0F2267E224BF6885F0599E444EF58394D449FD30269E3014"
+}
 
 # 🍔 Startup task
 
 Write-Host "Creating startup task: $TaskName" -ForegroundColor Green
 
-Set-Location ..\src # Pour Startup.ps1
-
-# Après avoir lancé. Sinon avec l'option fast on affichait la fenêtre admin, puis notre programme se lançait et déplaçait vers d'autres bureaux (si certains étaient ouverts avec déjà des paramétrages d'apps... ce qui serait bizarre puisqu'on n'en est qu'à l'install... et puis d'ailleurs non, on ne veut pas que la présente exécution du Register-Startup soit cachée par un tel déplacement.) Doncnon, avant d'avoir lancé.
-Register-Startup $StartupFile
+if ($DryRun) {
+    Write-Host "[DRY RUN] Would change to src directory" -ForegroundColor Cyan
+    Write-Host "[DRY RUN] Would register startup task: $TaskName" -ForegroundColor Cyan
+} else {
+    Set-Location ..\src # Pour Startup.ps1
+    Register-Startup $StartupFile
+}
 
 # Start the application immediately (don't wait for next login)
-Write-Host "Starting application..." -ForegroundColor Green
-Start-Process PowerShell.exe -ArgumentList "-ExecutionPolicy", "Bypass", "-File", "`"$StartupFile`"" -WindowStyle Hidden
-Write-Host "Application started successfully" -ForegroundColor Green
+if ($DryRun) {
+    Write-Host "[DRY RUN] Would start application: $StartupFile" -ForegroundColor Cyan
+} else {
+    Write-Host "Starting application..." -ForegroundColor Green
+    Start-Process PowerShell.exe -ArgumentList "-ExecutionPolicy", "Bypass", "-File", "`"$StartupFile`"" -WindowStyle Hidden
+    Write-Host "Application started successfully" -ForegroundColor Green
+}
 
 # Set up custom config path
 if ($customConfig) {

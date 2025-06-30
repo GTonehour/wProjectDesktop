@@ -1,9 +1,10 @@
-$ErrorActionPreference = "Stop" # Sinon quand plante après installation, par exemple pour une question d'exécutable autohotkey, affiche le fzf comme si de rien était mais sans pouvoir se Hide ni fonctionner.
-
-$wProjectDesktop=(Join-Path $PSScriptRoot "..")
 function Hide-Term {
     & $env:ahk_wPD "$PSScriptRoot\hideTermStandalone.ahk"
 }
+function Run-Palette {
+    param([bool]$TestRun = $false)
+    # Ce qui se passe ici doit faire l'object d'un test, car c'est ce que Start-Term lancera.
+$wProjectDesktop=(Join-Path $PSScriptRoot "..")
 
 . $PSScriptRoot\ProjectUtils.ps1
 
@@ -27,7 +28,9 @@ while($true){
         Hide-Term
     }
     $keepOpened=$false
-    cls # Sinon on verra tous les "Executing" (et "Command failed") précédents le temps que la commande s'exécute. Pas juste avant le "executing" parce qu'on veut aussi effacer les "Not a project".
+    if(-Not $TestRun){
+        cls # Sinon on verra tous les "Executing" (et "Command failed") précédents le temps que la commande s'exécute. Pas juste avant le "executing" parce qu'on veut aussi effacer les "Not a project".
+    }
     $project = Get-CurrentDesktop | Get-DesktopName # 27mai25: "FromDesktop" failed with "Object reference not set to an instance of an object." 1.5.10\VirtualDesktop.ps1:1687 char:42. A relaunch of startupDocs.ps1 fixed it.
     $projectList = Get-ProjectList
     $projectObj = $projectList | Where-Object { $_.Name -eq $project }
@@ -126,5 +129,13 @@ while($true){
                 }
             }
         }
+    }
+    
+    if ($TestRun) {
+        break
+    }
+}
+    if ($TestRun) {
+        return $Name
     }
 }
