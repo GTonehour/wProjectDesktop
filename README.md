@@ -18,17 +18,6 @@ wProjectDesktop opens a virtual desktop dedicated to that project, and:
 
 Commands are [configurable](#configuration), they run located in your project directory: no need to cd anywhere! Examples: `code .` (VS Code), `explorer .` (Windows explorer), `wt` (Windows terminal), `lazygit`, `yazi`, git commands...
 
-# Features
-- [Hotkey (F1 by default)](#hotkey) to call the command palette from everywhere.
-- Alt+Tab focuses Windows related only to your current project.
-- Opens a dedicated desktop for each project.
-
-# Configuration
-## Projects
-## Commands
-## Hotkey
-## Apps
-
 # Alternative strategies
 ## One editor per project
 Modern editors (VS Code, Cursor) tend to be all-included: git, explorer, terminal... If your editor is good for you, then you solved multitasking : by alt+tab between editors of your different projects.
@@ -54,17 +43,7 @@ But also some drawbacks:
   - Alt+Tab being limited to the current desktop, according to the multitasking Windows settings. (I raised that issue to Komorebi, which likely won't implement that feature: https://github.com/LGUG2Z/komorebi/issues/505#issuecomment-2855404155)
   - The nice Tasks view (Win+Tab) UI, which allows to nicely move windows between desktops, show a window on all desktops, etc.
 
-# Comparisons
-## FlowLauncher
-## rofi (Linux)
-
-# Small footprint
-- Can be installed and used without admin rights
-- Uses native Windows Virtual Desktops instead of a reimplimentation like workspaces in Window Managers.
-
-# Usage
-
-# Install
+# Installation
 ## Executable
 Not ready yet.
 ## git clone
@@ -77,8 +56,27 @@ Not ready yet.
   .\Install.ps1 -customConfig "C:\MyCustomConfig"
   ~~~
 
+# Features
+- Alt+Tab focuses Windows related only to your current project.
+- [Hotkey (F1 by default)](#hotkey) to call the command palette from everywhere.
+- Opens a dedicated desktop for each project.
+
 # Configuration
 Configuration will be in `%LocalAppData%\wProjectDesktop\config` by default. You can specify a custom config path using the `-customConfig` parameter during installation (e.g., `.\Install.ps1 -customConfig "C:\MyCustomConfig"`).
+## Projects
+## Commands
+## Hotkey
+## Apps
+
+# Comparisons
+## FlowLauncher
+## rofi (Linux)
+
+# Small footprint
+- Can be installed and used without admin rights
+- Uses native Windows Virtual Desktops instead of a reimplimentation like workspaces in Window Managers.
+
+# Usage
 
 # FAQ
 > What if I want a dedicated desktop for something with apps but no files, for instance a music player?
