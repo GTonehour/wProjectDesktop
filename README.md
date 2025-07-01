@@ -6,22 +6,28 @@ wProjectDesktop is a light and open-source solution that displays each project i
 
 [VIDEO]
 
-# Definitions (ou "Concept"?)
+# Definitions
 
-Projects are the directories you [configured], for instance %USERPROFILE%\projects subfolders.
+Projects are the directories you [configured](#projects), for instance %USERPROFILE%\projects subfolders.
 
-Call the command palette with the [hotkey], chose "Open project" and pick one of them with [fuzzy-finding].
+Call the command palette with the [hotkey](#hotkey), chose "Open project" and pick one of them with [fuzzy-finding](https://github.com/junegunn/fzf).
 
 wProjectDesktop opens a virtual desktop dedicated to that project, and:
-1. directly opens sites and apps you [configured] for that project (emails, instant messages and Jira for work ; Whatsapp and emails for personal stuff ; music player...)
+1. directly opens sites and apps you [configured](#apps) for that project (emails, instant messages and Jira for work ; Whatsapp and emails for personal stuff ; music player...)
 2. displays the command palette for you to pick the next program run.
 
-Commands are [configurable], they run located in your project directory: no need to cd anywhere! Examples: `code .` (VS Code), `explorer .` (Windows explorer), `wt` (Windows terminal), `lazygit`, `yazi`, git commands...
+Commands are [configurable](#configuration), they run located in your project directory: no need to cd anywhere! Examples: `code .` (VS Code), `explorer .` (Windows explorer), `wt` (Windows terminal), `lazygit`, `yazi`, git commands...
 
 # Features
-- [Hotkey (F1 by default)] to call the command palette from everywhere.
+- [Hotkey (F1 by default)](#hotkey) to call the command palette from everywhere.
 - Alt+Tab focuses Windows related only to your current project.
 - Opens a dedicated desktop for each project.
+
+# Configuration
+## Projects
+## Commands
+## Hotkey
+## Apps
 
 # Alternative strategies
 ## One editor per project
@@ -36,10 +42,10 @@ In both cases, you end up having multiple windows per project, all in the same d
 Window managers (GlazeWM, Komorebi, workspacer...) often implement "workspaces". Their sort of a reimplementation of Windows' native Virtual Desktops.
 
 They're generally not compatible in any way with Windows Virtual Desktop:
-- Komorebi explicitely doesn't try to support compatibility with Windows VD (https://github.com/LGUG2Z/komorebi/issues/15#issuecomment-901605163
+- Komorebi explicitely doesn't try to support compatibility with Windows VD (https://github.com/LGUG2Z/komorebi/issues/15#issuecomment-901605163)
 
 This have advantages:
-- The WM developers are free to add all the features they want, not limited by the [lack of a proper API for Windows Virtual Desktop](https://devblogs.microsoft.com/oldnewthing/20201123-00/?p=104476)
+- The WM developers are free to add all the features they want, not limited by the [lack of a proper API for Windows Virtual Desktop](https://devblogs.microsoft.com/oldnewthing/20201123-00/?p=104476).
 
 But also some drawbacks:
 - Each WM implements its own thing
@@ -62,7 +68,7 @@ But also some drawbacks:
 ## Executable
 Not ready yet.
 ## git clone
-- Install (AutoHotkey v2)[www.autohotkey.com/about]
+- Install [AutoHotkey v2](www.autohotkey.com/about)
 - ~~~ps1
   git clone ...
   Set-Location wProjectDesktop
