@@ -84,9 +84,9 @@ if (-not $DryRun) {
     Copy-Item "Sounds" $InstallDir\Sounds -Recurse -Force
     Copy-Item "DefaultPalette" $InstallDir\DefaultPalette -Recurse -Force
     Copy-Item -Path "Uninstall.ps1" -Destination $InstallDir -Force # On ne le mets pas dans src, pour qu'il soit visible de quelqu'un qui le chercherait dans le dossier cloné ; mais on le copie quand même, pour qu'il puisse être trouvé là-bas.
-    mkdir "$InstallDir\State"
-    mkdir "$InstallDir\State\MRU"
-	mkdir "$InstallDir\bin"
+    New-Item -ItemType "Directory" "$InstallDir\State" | Out-Null
+    New-Item -ItemType "Directory" "$InstallDir\State\MRU" | Out-Null
+	New-Item -ItemType "Directory" "$InstallDir\bin" | Out-Null
 	Out-File -FilePath "$InstallDir\State\CurrentProject.txt"
 }
     Write-Host "Successfully copied all project files" -ForegroundColor Green
@@ -121,13 +121,6 @@ if (-not $DryRun) {
     Register-Startup $StartupFile
 }
 
-# Start the application immediately (don't wait for next login)
-    Write-Host "Starting application..." -ForegroundColor Green
-if (-not $DryRun) {
-    Start-Process PowerShell.exe -ArgumentList "-ExecutionPolicy", "Bypass", "-File", "`"$StartupFile`"" -WindowStyle Hidden # 🦑 Ne veut-on pas plutôt lancer celui de AppData?
-}
-    Write-Host "Application started successfully" -ForegroundColor Green
-
 # User may have created the config directory before, for instance in their dotfiles.
 if (-not (Test-Path $ConfigPath)) {
 if (-not $DryRun) {
@@ -146,5 +139,13 @@ $ConfigPath | Out-File -FilePath $configPathFile -Encoding UTF8
 Write-Host "Config path stored in: $configPathFile" -ForegroundColor Green
 
 Pop-Location # Voir Push-Location plus haut.
+
+# Start the application immediately (don't wait for next login)
+    Write-Host "Starting application..." -ForegroundColor Green
+if (-not $DryRun) {
+    Start-Process PowerShell.exe -ArgumentList "-ExecutionPolicy", "Bypass", "-File", "`"$StartupFile`"" -WindowStyle Hidden # 🦑 Ne veut-on pas plutôt lancer celui de AppData?
+}
+    Write-Host "Application started successfully" -ForegroundColor Green
+
 return 1
 }

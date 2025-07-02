@@ -1,5 +1,4 @@
-	Set-Location $PSScriptRoot # Si wPD_Run_From_Source, peut différer de $env:LocalAppData\wProjectDesktop
-	Set-Location ..
+Set-Location (Join-Path $PSScriptRoot ..)# Si wPD_Run_From_Source, peut différer de $env:LocalAppData\wProjectDesktop
 & $env:ahk_wPD .\src\hotkey.ahk
 . .\src\New-Project.ps1
 . .\src\Show-Term.ps1
