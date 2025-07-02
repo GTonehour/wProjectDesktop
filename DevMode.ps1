@@ -1,6 +1,3 @@
-$stateFolder = Join-Path $PSScriptRoot State
-if (-not (Test-Path $stateFolder)) {
-   New-Item -Path $stateFolder -ItemType Directory -Force
-}
-# $devMode=$true
+. install_res\Setup-DevDir.ps1
+
 . $PSScriptRoot\src\Startup.ps1

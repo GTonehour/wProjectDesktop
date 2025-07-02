@@ -4,7 +4,7 @@ function Hide-Term {
 function Run-Palette {
     param([bool]$TestRun = $false)
     # Ce qui se passe ici doit faire l'object d'un test, car c'est ce que Start-Term lancera.
-$wProjectDesktop=(Join-Path $PSScriptRoot "..")
+$wProjectDesktop=(Join-Path $PSScriptRoot ..)
 
 . $PSScriptRoot\ProjectUtils.ps1
 
