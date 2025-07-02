@@ -1,7 +1,6 @@
 # On nomme autrement que juste "Install.ps1" car il nous arrivait de lancer le mauvais, quand une exécution incomplète nous laissait dans install_res.
 function Install-WPD {
 param(
-    [string]$TaskName = "wProjectSetup",
     [string]$ConfigPath = "$env:LocalAppData\wProjectDesktop\config",
     [switch]$DryRun
 )
@@ -14,8 +13,6 @@ Set-Location (Join-Path $PSScriptRoot ..) # Might be ran from somewhere else.
 
 
 $InstallDir = "$env:LOCALAPPDATA\wProjectDesktop"
-$StartupFile = "src/Startup.ps1"
-
 # 🍔 AutoHotkey. Avant le reste, car l'utilisateur pourra vouloir arrêter la procédure le temps de télécharger ahk.
 # Here rather than at runtime, because multiple ways to find the ahk paths, so too heavy for runtime.
 $autoHotkeyPath = Find-AutoHotkeyPath
@@ -115,10 +112,10 @@ if (-not $DryRun) {
         -ExpectedChecksum "F3799B4A542BAD7F0F2267E224BF6885F0599E444EF58394D449FD30269E3014"
 }
 
-Write-Host "Creating startup task: $TaskName" -ForegroundColor Green
+Write-Host "Creating startup task: wProjectSetup" -ForegroundColor Green
 
 if (-not $DryRun) {
-    Register-Startup $StartupFile
+    Register-Startup "src/Startup.ps1"
 }
 
 # User may have created the config directory before, for instance in their dotfiles.
@@ -143,7 +140,7 @@ Pop-Location # Voir Push-Location plus haut.
 # Start the application immediately (don't wait for next login)
     Write-Host "Starting application..." -ForegroundColor Green
 if (-not $DryRun) {
-    Start-Process PowerShell.exe -ArgumentList "-ExecutionPolicy", "Bypass", "-File", "`"$StartupFile`"" -WindowStyle Hidden # 🦑 Ne veut-on pas plutôt lancer celui de AppData?
+    Start-Process PowerShell.exe -ArgumentList "-ExecutionPolicy", "Bypass", "-File", "`"$InstallDir\src\Palette.ps1`"" -WindowStyle Hidden
 }
     Write-Host "Application started successfully" -ForegroundColor Green
 
