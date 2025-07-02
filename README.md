@@ -6,7 +6,7 @@ wProjectDesktop is a light and open-source solution that displays each project i
 
 [VIDEO]
 
-# Definitions
+# Usage
 
 Projects are the directories you [configured](#projects), for instance %USERPROFILE%\projects subfolders.
 
@@ -62,11 +62,16 @@ Not ready yet.
 - Opens a dedicated desktop for each project.
 
 # Configuration
-Configuration will be in `%LocalAppData%\wProjectDesktop\config` by default. You can specify a custom config path using the `-customConfig` parameter during installation (e.g., `.\Install.ps1 -customConfig "C:\MyCustomConfig"`).
+Configuration folder will be in `%LocalAppData%\wProjectDesktop\config` by default. You can replace it by a custom one using the `-customConfig` parameter during installation (e.g., `.\Install.ps1 -customConfig "C:\MyCustomConfig"`).
+
 ## Projects
+project.json
 ## Commands
+"Palette" folder
 ## Hotkey
+Coming soon.
 ## Apps
+Coming soon.
 
 # Comparisons
 ## FlowLauncher
@@ -74,9 +79,7 @@ Configuration will be in `%LocalAppData%\wProjectDesktop\config` by default. You
 
 # Small footprint
 - Can be installed and used without admin rights
-- Uses native Windows Virtual Desktops instead of a reimplimentation like workspaces in Window Managers.
-
-# Usage
+- Uses natives Windows terminal, Virtual Desktops...
 
 # FAQ
 > What if I want a dedicated desktop for something with apps but no files, for instance a music player?
@@ -84,23 +87,26 @@ Configuration will be in `%LocalAppData%\wProjectDesktop\config` by default. You
 Just create an empty "music" directory, as if it was a project. It might sound like a hack, but wProjectDesktop tries to rely on existing OS features instead of introducing specific settings, to be as [thin] as possible.
 
 # Development
+## Prerequisites
 ## Install
-~~~ps1
-Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
-~~~
-## Dev Mode
 - Install (AutoHotkey v2)[www.autohotkey.com/about]
+- 
+  ~~~ps1
+  Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
+  ~~~
+## Run
+TODO
 ~~~ps1
 git clone ...
 Set-Location wProjectDesktop
 [Environment]::SetEnvironmentVariable("ahk_wPD", ..., "User") # Path to the (AutoHotkey v2)[www.autohotkey.com/about] executable (or run Install.ps1)
 [Environment]::SetEnvironmentVariable("wPD_VirtualDesktop_exe", ..., "User") # Path to (VirtualDesktop.exe)[https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe].
-
-# Run once
+~~~
+or run once
 ~~~ps1
 .\DevMode.ps1
 ~~~
-Or if you want to test the terminal without the initial Destkop initialization:
+Or if you want to test only the terminal without the initial Destkop initialization:
 ~~~ps1
 .\src\Start-Term.ps1
 ~~~
