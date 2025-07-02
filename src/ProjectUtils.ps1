@@ -8,13 +8,6 @@ function Get-ConfigPath {
 function Get-ProjectList {
 $configDir = Get-ConfigPath
 $configPath = "$configDir\projects.json"
-
-if (-not (Test-Path $configPath)) {
-   Write-Host "Config file not found at: $configPath" -ForegroundColor Red
-   Write-Host "Please create the config file first." -ForegroundColor Yellow
-   exit 1
-}
-
 $config = Get-Content $configPath | ConvertFrom-Json
 
     $projectList = @()

@@ -7,6 +7,9 @@ $ErrorActionPreference = "Stop"
 # Define installation directory (must match Uninstall.ps1)
 $InstallDir = "$env:LOCALAPPDATA\wProjectDesktop"
 
+Write-Host "If wProjectDesktop is currently running, please close the command palette (focus it, then Alt+F4) then exit 'wProjectDesktop.ahk' (in the system tray, right-click, exit). Then press Enter to uninstall." -NoNewLine
+Read-Host
+
 # Check if Uninstall.ps1 exists
 $UninstallScript = "$InstallDir\src\Start-Uninstall.ps1"
 if (-not (Test-Path $UninstallScript)) {

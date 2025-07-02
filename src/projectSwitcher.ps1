@@ -20,7 +20,7 @@ $projectList = $projectList | ForEach-Object {
 $selection = $projectList |
     Sort-Object -Property @{Expression="Opened"; Descending=$true}, @{Expression="Name"} |
     Select-Object -ExpandProperty newName |
-    fzf.exe --prompt "Open project " --bind one:accept # Sélection automatique quand un seul match
+    fzf.exe --prompt "Open project " # J'enlève le "--bind one:accept". En particulier à l'intallation il n'y avait que le seul projet "config", donc le choix du projet y emmenait avant d'avoir montré ce (seul) choix.
 
 if (-not [string]::IsNullOrEmpty($selection)) { # Si on a fait échap, ne faisons rien d'autre.
     $project = $projectList | Where-Object { $_.newName -eq $selection }

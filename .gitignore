@@ -1,3 +1,4 @@
 bin/
 State/
 install_res/StartupTask_generated.xml
+devModeConfig/
