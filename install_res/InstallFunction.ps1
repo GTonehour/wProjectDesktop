@@ -109,21 +109,29 @@ if (-not $DryRun) {
         -ExpectedChecksum "F3799B4A542BAD7F0F2267E224BF6885F0599E444EF58394D449FD30269E3014"
 }
 
-Write-Host "Creating startup task: wProjectSetup"
-
-$StartupFile = "$InstallDir\src\Startup.ps1"
-if (-not $DryRun) {
-    Register-Startup -FullPathToStartupFile $StartupFile
-}
-
+# On pourrait vouloir faire plutôt si l'utilisateur tape souvent un mauvais chemin ici... mais on veut que $InstallDir ait déjà été créé. Pour ne pas avoir à gérer les cas où $ConfigPath y est situé.
 # User may have created the config directory before, for instance in their dotfiles.
 if (-not (Test-Path $ConfigPath)) {
+    $response = Read-Host "Config directory '$ConfigPath' does not exist. Create it? (y/n)"
+    if ($response -match '^[Yy]') {
 if (-not $DryRun) {
     New-Item -ItemType Directory -Path $ConfigPath | Out-Null
     New-Item -ItemType Directory -Path (Join-Path $ConfigPath "Palette") | Out-Null
 '[{"Name": "wProjectDesktop Install folder", "Path": "' + $ConfigPath.Replace('\', '\\') + '"}]' | Out-File -FilePath $ConfigPath\projects.json -Force -Encoding UTF8
 }
+    } else {
+        Write-Host "Config directory creation cancelled. Exiting." -ForegroundColor Yellow
+        exit 1
+    }
     Write-Host "Created config directory: $ConfigPath" -ForegroundColor Green
+} else {
+    Write-Host "Using an existing configuration directory: $ConfigPath" -ForegroundColor Green
+}
+
+Write-Host "Creating startup task: wProjectSetup"
+$StartupFile = "$InstallDir\src\Startup.ps1"
+if (-not $DryRun) {
+    Register-Startup -FullPathToStartupFile $StartupFile
 }
 
 # Store the config path in configPath.txt
