@@ -55,10 +55,7 @@ Not ready yet.
 - Install [AutoHotkey v2](www.autohotkey.com/about)
 - ~~~ps1
   git clone ...
-  Set-Location wProjectDesktop
-  .\Install.ps1
-  # Or with custom config path:
-  .\Install.ps1 -customConfig "C:\MyCustomConfig"
+  .\wProjectDesktop\Install.ps1 # -ConfigPath path\to\config
   ~~~
 
 ## Features
@@ -96,7 +93,7 @@ Just create an empty "music" directory, as if it was a project. It might sound l
 ~~~ps1
 Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
 ~~~
-### Dev Mode
+### Run
 - Install [AutoHotkey v2](www.autohotkey.com/about)
 ~~~ps1
 git clone ...
@@ -104,7 +101,6 @@ Set-Location wProjectDesktop
 [Environment]::SetEnvironmentVariable("ahk_wPD", ..., "User") # Path to the (AutoHotkey v2)[www.autohotkey.com/about] executable (or run Install.ps1)
 [Environment]::SetEnvironmentVariable("wPD_VirtualDesktop_exe", ..., "User") # Path to (VirtualDesktop.exe)[https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe].
 ~~~
-
 Run once:
 ~~~ps1
 .\DevMode.ps1
