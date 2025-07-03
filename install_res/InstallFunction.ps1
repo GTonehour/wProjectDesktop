@@ -116,8 +116,15 @@ if (-not (Test-Path $ConfigPath) -and -not $DryRun) {
     if ($response -match '^[Yy]') {
     New-Item -ItemType Directory -Path $ConfigPath | Out-Null
     New-Item -ItemType Directory -Path (Join-Path $ConfigPath "Palette") | Out-Null
-'[{"Name": "wProjectDesktop Install folder", "Path": "' + $ConfigPath.Replace('\', '\\') + '"}]' | Out-File -FilePath $ConfigPath\projects.json -Force -Encoding UTF8
+	$ConfigPathDoubleBackslashes = $ConfigPath.Replace('\','\\')
+"[{
+	`"Name`": `"wProjectDesktop install`",
+	`"Path`": `"$ConfigPathDoubleBackslashes`"
+},{
+	`"Name`": `"wProjectDesktop config`",
+	`"Path`": `"$configPath`"
 }
+]" | Out-File -FilePath $ConfigPath\projects.json -Force -Encoding UTF8
     } else {
         Write-Host "Config directory creation cancelled. Exiting." -ForegroundColor Yellow
         exit 1
