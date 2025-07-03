@@ -111,10 +111,9 @@ if (-not $DryRun) {
 
 # On pourrait vouloir faire plutôt si l'utilisateur tape souvent un mauvais chemin ici... mais on veut que $InstallDir ait déjà été créé. Pour ne pas avoir à gérer les cas où $ConfigPath y est situé.
 # User may have created the config directory before, for instance in their dotfiles.
-if (-not (Test-Path $ConfigPath)) {
+if (-not (Test-Path $ConfigPath) -and -not $DryRun) {
     $response = Read-Host "Config directory '$ConfigPath' does not exist. Create it? (y/n)"
     if ($response -match '^[Yy]') {
-if (-not $DryRun) {
     New-Item -ItemType Directory -Path $ConfigPath | Out-Null
     New-Item -ItemType Directory -Path (Join-Path $ConfigPath "Palette") | Out-Null
 '[{"Name": "wProjectDesktop Install folder", "Path": "' + $ConfigPath.Replace('\', '\\') + '"}]' | Out-File -FilePath $ConfigPath\projects.json -Force -Encoding UTF8
