@@ -1,4 +1,8 @@
-## wProjectDesktop - 🖥️ Windows per-project desktop & command palette
+<p align="center">
+  <img width="400" src="./assets/logo.png" alt="Synthwave-style logo showing the name wProjectDesktop on top of the horizon">
+</p>
+
+## 🖥️ Windows per-project desktop & command palette
 
 Work, personal stuff, side-husle, dotfiles, notes... multitasking is fun and games until each project starts having multiple windows (editor, browser, explorer, terminal, Windows apps, AI agent), creating an Alt+Tabbing hell.
 

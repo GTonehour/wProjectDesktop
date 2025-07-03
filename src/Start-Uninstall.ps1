@@ -12,16 +12,16 @@ Write-Host "===================" -ForegroundColor Cyan
 
 # Check if installation exists
 if (-not (Test-Path $InstallDir)) {
-    Write-Host "Installation directory not found: $InstallDir" -ForegroundColor Yellow
-    Write-Host "wProjectDesktop may not be installed or already removed" -ForegroundColor Yellow
+    Write-Host "Installation directory not found: $InstallDir" -ForegroundColor Red
+    Write-Host "wProjectDesktop may not be installed or already removed"
 } else {
     # Show what will be removed
-    Write-Host "Installation found at: $InstallDir" -ForegroundColor Gray
+    Write-Host "Installation found at: $InstallDir" -ForegroundColor Green
     
     if (-not $Force) {
         $confirm = Read-Host "Remove installation directory and all files? (y/N)"
         if ($confirm -notmatch "^[Yy]") {
-            Write-Host "Uninstall cancelled" -ForegroundColor Yellow
+            Write-Host "Uninstall cancelled"
             exit 0
         }
     }
@@ -30,32 +30,32 @@ if (-not (Test-Path $InstallDir)) {
         Remove-Item $InstallDir -Recurse -Force
         Write-Host "Removed installation directory" -ForegroundColor Green
     } catch {
-        Write-Host "Warning: Could not remove some files in $InstallDir" -ForegroundColor Yellow
+        Write-Host "Warning: Could not remove some files in $InstallDir" -ForegroundColor Red
         Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
     }
 }
 
 # Remove startup registry entry
-Write-Host "Removing startup registry entry..." -ForegroundColor Gray
+Write-Host "Removing startup registry entry..."
 reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "wProjectStartup" /f 2>$null
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "Removed startup registry entry" -ForegroundColor Green
 } else {
-    Write-Host "Startup registry entry not found (may already be removed)" -ForegroundColor Yellow
+    Write-Host "No startup registry entry found"
 }
 
 # Remove scheduled task (if it exists)
-Write-Host "Checking for scheduled task..." -ForegroundColor Gray
+Write-Host "Checking for scheduled task..."
 schtasks /query /tn "\wProjectDesktop\wProjectDesktop_Startup" 2>$null
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "Scheduled task found. Removing (requires admin)..." -ForegroundColor Yellow
+    Write-Host "Scheduled task found. Removing (requires admin)..."
     $command = "schtasks /delete /tn `"\wProjectDesktop\wProjectDesktop_Startup`" /f"
     Start-Process powershell -Verb RunAs -ArgumentList "-NoExit", "-Command", $command
-    Write-Host "Admin prompt opened. Please complete the task deletion." -ForegroundColor Yellow
+    Write-Host "Admin prompt opened. Please complete the task deletion."
 } else {
-    Write-Host "Scheduled task not found (may already be removed)" -ForegroundColor Yellow
+    Write-Host "Scheduled task not found"
 }
 
 Write-Host "Uninstall completed" -ForegroundColor Green

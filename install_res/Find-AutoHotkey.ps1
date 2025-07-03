@@ -1,5 +1,5 @@
 function Find-AutoHotkeyPath {
-    Write-Host "Searching for AutoHotkey installation..." -ForegroundColor Cyan
+    Write-Host "Searching for AutoHotkey installation..."
     
     # 1. Check user environment variable first
     $ahkPath = [Environment]::GetEnvironmentVariable("ahk_wPD", "User")
@@ -9,7 +9,7 @@ function Find-AutoHotkeyPath {
     }
     
     # 2. Registry lookup
-    Write-Host "Checking Windows registry..." -ForegroundColor Yellow
+    Write-Host "Checking Windows registry..."
     try {
         $regPath = Get-ItemProperty -Path "HKLM:\SOFTWARE\AutoHotkey" -Name "InstallDir" -ErrorAction SilentlyContinue
         if ($regPath) {
@@ -21,11 +21,11 @@ function Find-AutoHotkeyPath {
         }
     }
     catch {
-        Write-Host "Registry lookup failed" -ForegroundColor DarkYellow
+        Write-Host "Registry lookup failed"
     }
     
     # 3. PATH environment variable
-    Write-Host "Checking PATH environment variable..." -ForegroundColor Yellow
+    Write-Host "Checking PATH environment variable..."
     try {
         $ahkInPath = Get-Command "AutoHotkey.exe" -ErrorAction SilentlyContinue
         if ($ahkInPath) {
@@ -34,18 +34,18 @@ function Find-AutoHotkeyPath {
         }
     }
     catch {
-        Write-Host "PATH lookup failed" -ForegroundColor DarkYellow
+        Write-Host "PATH lookup failed"
     }
     
     # 4. Common installation paths
-    Write-Host "Checking common installation paths..." -ForegroundColor Yellow
+    Write-Host "Checking common installation paths..."
 # Determine the appropriate executable based on system architecture
 if ([Environment]::Is64BitOperatingSystem) {
     $ahkExe = "AutoHotkey64.exe"
-    Write-Host "Detected 64-bit system, looking for $ahkExe" -ForegroundColor Cyan
+    Write-Host "Detected 64-bit system, looking for $ahkExe"
 } else {
     $ahkExe = "AutoHotkey32.exe"
-    Write-Host "Detected 32-bit system, looking for $ahkExe" -ForegroundColor Cyan
+    Write-Host "Detected 32-bit system, looking for $ahkExe"
 }
 # Write-Host "Looking for $ahkExe"
 
@@ -70,7 +70,7 @@ $commonPaths = @(
     # --- MODIFICATION START: Offer automatic download and install ---
     $choice = Read-Host "Download and install AutoHotkey v2 ? (Else you'll be prompted to manually enter the path to the exe file.) (y/n)"
     if ($choice -match '^(y|yes)$') {
-        Write-Host "Attempting to download and install AutoHotkey v2..." -ForegroundColor Cyan
+        Write-Host "Attempting to download and install AutoHotkey v2..."
         $tempSetupFile = Join-Path $env:TEMP "ahk-v2-setup.exe" # Download to a temporary path
         
         try {
@@ -82,7 +82,7 @@ $commonPaths = @(
 
             if (Test-Path $tempSetupFile) {
                 Write-Host "AutoHotkey setup downloaded successfully: $tempSetupFile" -ForegroundColor Green
-                Write-Host "Attempting silent installation. This may require administrator privileges." -ForegroundColor Cyan
+                Write-Host "Attempting silent installation. This may require administrator privileges."
                 
                 # Silent install. /S is for silent. It will install to the default location.
                 # The default location is usually C:\Program Files\AutoHotkey
@@ -92,15 +92,15 @@ $commonPaths = @(
                 }
                 catch {
                     Write-Host "Silent installation failed. $($_.Exception.Message)" -ForegroundColor Red
-                    Write-Host "You might need to run PowerShell as an Administrator, or the installer was cancelled." -ForegroundColor Yellow
-                    Write-Host "Proceeding to manual path input." -ForegroundColor Yellow
+                    Write-Host "You might need to run PowerShell as an Administrator, or the installer was cancelled."
+                    Write-Host "Proceeding to manual path input."
                     # Fall through to manual input
                 }
 
                 # Brief pause to allow filesystem and registry to update
-                Start-Sleep -Seconds 3 
+                Start-Sleep -Seconds 3
 
-                Write-Host "Re-scanning for AutoHotkey installation..." -ForegroundColor Cyan
+                Write-Host "Re-scanning for AutoHotkey installation..."
                 
                 # Attempt to find it again using the most likely methods post-install
                 # Check registry again
@@ -134,7 +134,7 @@ $commonPaths = @(
                     }
                 }
                 
-                Write-Host "AutoHotkey may have been installed, but its path could not be automatically found." -ForegroundColor Yellow
+                Write-Host "AutoHotkey may have been installed, but its path could not be automatically found."
                 Write-Host "You might need to restart PowerShell for PATH changes to take effect if it was installed to a new directory in PATH." -ForegroundColor Yellow
             } else {
                 Write-Host "Download function did not result in the expected file: $tempSetupFile." -ForegroundColor Red
@@ -149,17 +149,17 @@ $commonPaths = @(
             }
         }
         # If installation was attempted but path not found, or if download/install failed/skipped, fall through to manual input.
-        Write-Host "Proceeding to manual path input." -ForegroundColor Yellow
+        Write-Host "Proceeding to manual path input."
         Write-Host ""
     }
     
     # 6. Not found - prompt user
     Write-Host "AutoHotkey not found automatically" -ForegroundColor Red
     Write-Host ""
-    Write-Host "Please provide the full path to AutoHotkey.exe" -ForegroundColor White
-    Write-Host "Example: C:\Program Files\AutoHotkey\AutoHotkey.exe" -ForegroundColor Gray
+    Write-Host "Please provide the full path to AutoHotkey.exe"
+    Write-Host "Example: C:\Program Files\AutoHotkey\AutoHotkey.exe"
     Write-Host ""
-    Write-Host "Note: You can set this later in the ahk_wPD environment variable:" -ForegroundColor Cyan
+    Write-Host "Note: You can set this later in the ahk_wPD environment variable."
     Write-Host ""
     
     do {
@@ -176,7 +176,7 @@ $commonPaths = @(
         }
         else {
             Write-Host "File not found at: $userPath" -ForegroundColor Red
-            Write-Host "Please check the path and try again." -ForegroundColor Yellow
+            Write-Host "Please check the path and try again."
         }
     } while ($true)
 }
@@ -189,7 +189,7 @@ function Set-AutoHotkeyEnvironmentVariable {
         try {
             [Environment]::SetEnvironmentVariable("ahk_wPD", $AhkPath, "User")
             Write-Host "Environment variable ahk_wPD set successfully" -ForegroundColor Green
-            Write-Host "  This will be available in new PowerShell sessions" -ForegroundColor Gray
+            Write-Host "  This will be available in new PowerShell sessions"
         }
         catch {
             Write-Host "Failed to set environment variable: $($_.Exception.Message)" -ForegroundColor Red
