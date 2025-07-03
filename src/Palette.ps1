@@ -53,7 +53,7 @@ while($true){
     }
 
     $wtLocated = "wt -d $projectPath"
-    $spawnWt = "$wtLocated -p cmdLatte"
+    $spawnWt = "$wtLocated"
     # -w $project # Si on veut nommer une fenêtre dans le but d'y ouvrir d'autres onglets. (Pour le titre, voir --title)
 
     # Load commands from DefaultPalette and config/Palette folders
