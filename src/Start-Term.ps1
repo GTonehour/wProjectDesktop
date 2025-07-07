@@ -14,8 +14,9 @@ $windowHeight = $rows * $charHeight
 $x = [math]::Round(($screenWidth - $windowWidth) / 2)
 $y = [math]::Round(($screenHeight - $windowHeight) / 2)
 
-wt --focus --pos $x,$y --size $cols,$rows --title PrimaryDevTerm -d "$PSScriptRoot\.." powershell -File .\src\PaletteStandalone.ps1
+# _37 car par exemple ma fenêtre Neovide portait le seul nom du projet.
+wt --focus --pos $x,$y --size $cols,$rows --title wProjectDesktop_37 -d "$PSScriptRoot\.." powershell -File .\src\PaletteStandalone.ps1
 
 Start-Sleep 0.6 # 0.5/0.7 # Pas seulement dans Startup.ps1 pour attendre le premier Show-Term ; aussi quand on le restaure suite à un crash, on attend pour le WinShow qui va suivre.
-# Startup.ps1: Il ne suffirait pas d'éviter (la première fois) le Hide-Term en haut de in...ps1. Car on voudrait de toute façon focus ce terminal. Certes la première fois on n'aurait pas besoin de faire l'habituel Hide+Show car on sait où on est... mais pas si sûr, car techniquement le desktop courant aurait pu bougentre le "wt" et le Show qu'on ferait ici.
+# Startup.ps1: Il ne suffirait pas d'éviter (la première fois) le Hide-Term en haut de in...ps1. Car on voudrait de toute façon focus ce terminal. Certes la première fois on n'aurait pas besoin de faire l'habituel Hide+Show car on sait où on est... mais pas si sûr, car techniquement le desktop courant aurait pu bouger entre le "wt" et le Show qu'on ferait ici.
 Show-Term
