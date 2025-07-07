@@ -1,4 +1,4 @@
-. .\install_res\Register-Startup.ps1
+. $PSScriptRoot\..\install_res\Register-Startup.ps1
 Register-Startup $PSScriptRoot\DevMode.ps1
 
 if ($LASTEXITCODE -eq 0) {

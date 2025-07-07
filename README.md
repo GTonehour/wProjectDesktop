@@ -96,14 +96,14 @@ Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
 ### Run
 - Install [AutoHotkey v2](www.autohotkey.com/about)
 ~~~ps1
-git clone ...
+git clone https://github.com/GTonehour/wProjectDesktop.git
 Set-Location wProjectDesktop
 [Environment]::SetEnvironmentVariable("ahk_wPD", ..., "User") # Path to the (AutoHotkey v2)[www.autohotkey.com/about] executable (or run Install.ps1)
 [Environment]::SetEnvironmentVariable("wPD_VirtualDesktop_exe", ..., "User") # Path to (VirtualDesktop.exe)[https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe].
 ~~~
 Run once:
 ~~~ps1
-.\DevMode.ps1
+.\dev\DevMode.ps1
 ~~~
 Or if you want to test only the terminal without the initial Destkop initialization:
 ~~~ps1
@@ -111,5 +111,5 @@ Or if you want to test only the terminal without the initial Destkop initializat
 ~~~
 Or schedule for startup:
 ~~~ps1
-.\DevModeSchedule.ps1
+.\dev\DevModeSchedule.ps1
 ~~~
