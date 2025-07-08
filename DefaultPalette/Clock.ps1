@@ -1,5 +1,5 @@
 function Invoke-Command {
-    param($project, $spawnWt, $projectPath, $wtLocated)
+    param($project, $projectPath, $wtCommand)
     $clockScript = "$PSScriptRoot\Resources\clock-script.ps1"
-    Invoke-Expression "$spawnWt --title `"Clock $project`" powershell -File `"$clockScript`""
+    Invoke-Expression "$wtCommand --title `"Clock $project`" powershell -File `"$clockScript`""
 }

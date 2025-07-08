@@ -1,4 +1,4 @@
 function Invoke-Command {
-    param($project, $spawnWt, $projectPath, $wtLocated)
-    Invoke-Expression "$spawnWt --title `"OpenAI Codex $project`" wsl bash -i -c `"codex`""
+    param($project, $projectPath, $wtCommand)
+    Invoke-Expression "$wtCommand --title `"OpenAI Codex $project`" wsl bash -i -c `"codex`""
 }

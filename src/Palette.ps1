@@ -52,8 +52,7 @@ while($true){
         $projectToDisplay = "$project (no project)"
     }
 
-    $wtLocated = "wt -d $projectPath"
-    $spawnWt = "$wtLocated"
+    $wtCommand = "wt -d $projectPath"
     # -w $project # Si on veut nommer une fenêtre dans le but d'y ouvrir d'autres onglets. (Pour le titre, voir --title)
 
     # Load commands from DefaultPalette and config/Palette folders
@@ -138,7 +137,7 @@ $null = $cmds.Add([PSCustomObject]@{
                 try {
                     # Source the script and call Invoke-Command function
                     . $selectedCmd.ScriptPath
-                    Invoke-Command -project $project -spawnWt $spawnWt -projectPath $projectPath -wtLocated $wtLocated
+                    Invoke-Command -project $project -projectPath $projectPath -wtCommand $wtCommand
                 } catch {
                     Write-Host "Command failed: $($_.Exception.Message)" -ForegroundColor Red
                     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

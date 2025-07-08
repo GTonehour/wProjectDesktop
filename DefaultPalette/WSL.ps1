@@ -1,4 +1,4 @@
 function Invoke-Command {
-    param($project, $spawnWt, $projectPath, $wtLocated)
-    Invoke-Expression "$wtLocated -p Ubuntu --title `"WSL $project`""
+    param($project, $projectPath, $wtCommand)
+    Invoke-Expression "$wtCommand -p Ubuntu --title `"WSL $project`""
 }

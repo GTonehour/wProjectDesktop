@@ -1,4 +1,4 @@
 function Invoke-Command {
-    param($project, $spawnWt, $projectPath, $wtLocated)
-    Invoke-Expression "$spawnWt --title `"yazi $project`" yazi ."
+    param($project, $projectPath, $wtCommand)
+    Invoke-Expression "$wtCommand --title `"yazi $project`" yazi ."
 }

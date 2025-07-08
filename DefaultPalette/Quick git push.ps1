@@ -1,4 +1,4 @@
 function Invoke-Command {
-    param($project, $spawnWt, $projectPath, $wtLocated)
+    param($project, $projectPath, $wtCommand)
     git add .; git commit -m "Quick push"; git push
 }

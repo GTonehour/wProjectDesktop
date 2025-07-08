@@ -1,4 +1,4 @@
 function Invoke-Command {
-    param($project, $spawnWt, $projectPath, $wtLocated)
-    Invoke-Expression "$spawnWt --title `"Gemini $project`" powershell gemini"
+    param($project, $projectPath, $wtCommand)
+    Invoke-Expression "$wtCommand --title `"Gemini $project`" powershell gemini"
 }

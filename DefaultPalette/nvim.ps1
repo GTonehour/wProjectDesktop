@@ -1,4 +1,4 @@
 function Invoke-Command {
-    param($project, $spawnWt, $projectPath, $wtLocated)
-    Invoke-Expression "$spawnWt --title `"nvim $project`" nvim ."
+    param($project, $projectPath, $wtCommand)
+    Invoke-Expression "$wtCommand --title `"nvim $project`" nvim ."
 }
