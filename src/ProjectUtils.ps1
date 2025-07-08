@@ -21,7 +21,10 @@ $config = Get-Content $configPath | ConvertFrom-Json
         } else {
             $name = $item.Label
             if (-not $name) {
-                $name = (Get-Item $expandedPath).Name
+                $name = Split-Path $expandedPath -Leaf
+            }
+            if (-not (Test-Path $expandedPath)) {
+                $name += ' (not found)'
             }
             $projectList += [PSCustomObject]@{Name = $name; Path = $expandedPath}
         }
