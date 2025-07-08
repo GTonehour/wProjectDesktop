@@ -130,9 +130,10 @@ $null = $cmds.Add([PSCustomObject]@{
             Update-MRU -ScriptName $selectedCmd.Name
             Write-Host "``$($selectedCmd.Name)``..." # Rassure le temps que neovide, par exemple, s'ouvre.
             if ($selectedCmd.Type -eq "Bash") {
-                # Source the script and call invoke_command function
-                $bashScript = "source '$($selectedCmd.ScriptPath)'; invoke_command '$project' '$spawnWt' '$projectPath' '$wtLocated'"
-                wt -p "Git Bash" --title Bash --appendCommandLine $bashScript
+				wt -p "Git Bash" -d "$projectPath" --appendCommandLine $selectedCmd.ScriptPath
+				# Ce qui suit ne reconduisait pas les variables d'environnement
+				# $wslpath = wsl wslpath -a $($selectedCmd.ScriptPath).Replace("\", "\\")
+				# wt -p "Git Bash" -d "$projectPath" -- bash $wslpath
             } elseif ($selectedCmd.Type -eq "PowerShell") {
                 try {
                     # Source the script and call Invoke-Command function
