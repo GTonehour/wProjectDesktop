@@ -28,8 +28,8 @@ if (-not [string]::IsNullOrEmpty($selection)) { # Si on a fait échap, ne faison
 		New-Desktop | Set-DesktopName -Name $project.Name
 		Switch-Desktop -Desktop $project.Name
 		New-Project $project.Name
-		# on voudra y faire quelque chose dans ce projet, puisqu'il est nouveau
-		Show-Term
+		# On voudra y faire quelque chose dans ce projet, puisqu'il est nouveau. Mais pas forcément avec wPD : peut-être en launchant une app (ou sur une des pages que wPD y aura ouverte par défaut ; mais ça, on pourrait le voir)
+		#Show-Term
 	} else {
 		Switch-Desktop -Desktop $project.Name
 	}
