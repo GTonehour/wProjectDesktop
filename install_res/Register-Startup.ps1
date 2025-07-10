@@ -33,6 +33,6 @@ Start-Process powershell -Verb RunAs -ArgumentList "-NoExit", "-Command", $combi
 		reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "wProjectStartup" /d "PowerShell.exe -ExecutionPolicy Bypass -File `"$FullPathToStartupFile`""
 # reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "wProjectStartup" # To read.
 # reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "wProjectStartup" /f
+		Write-Host "Startup registered successfully" -ForegroundColor Green
 	}
-	Write-Host "Startup registered successfully" -ForegroundColor Green
 }
