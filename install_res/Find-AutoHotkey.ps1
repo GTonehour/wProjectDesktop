@@ -1,3 +1,40 @@
+function Test-CommonAutoHotkeyPaths {
+    param([string]$Context = "")
+    
+    # Determine the appropriate executable based on system architecture
+    if ([Environment]::Is64BitOperatingSystem) {
+        $ahkExe = "AutoHotkey64.exe"
+        if (-not $Context) {
+            Write-Host "Detected 64-bit system, looking for $ahkExe"
+        }
+    } else {
+        $ahkExe = "AutoHotkey32.exe"
+        if (-not $Context) {
+            Write-Host "Detected 32-bit system, looking for $ahkExe"
+        }
+    }
+
+    $commonPaths = @(
+        "${env:ProgramFiles}\AutoHotkey\$ahkExe",
+        "${env:ProgramFiles(x86)}\AutoHotkey\$ahkExe",
+        "${env:LOCALAPPDATA}\Programs\AutoHotkey\v2\$ahkExe",
+        "${env:ProgramFiles}\AutoHotkey\AutoHotkey.exe",
+        "${env:ProgramFiles(x86)}\AutoHotkey\AutoHotkey.exe",
+        "${env:ProgramFiles}\AutoHotkey\v2\AutoHotkey.exe",
+        "${env:ProgramFiles(x86)}\AutoHotkey\v2\AutoHotkey.exe"
+    )
+    
+    foreach ($path in $commonPaths) {
+        if (Test-Path $path) {
+            $message = if ($Context) { "Found AutoHotkey at: $path $Context" } else { "Found AutoHotkey at: $path" }
+            Write-Host $message -ForegroundColor Green
+            return $path
+        }
+    }
+    
+    return $null
+}
+
 function Find-AutoHotkeyPath {
     Write-Host "Searching for AutoHotkey installation..."
     
@@ -39,28 +76,9 @@ function Find-AutoHotkeyPath {
     
     # 4. Common installation paths
     Write-Host "Checking common installation paths..."
-# Determine the appropriate executable based on system architecture
-if ([Environment]::Is64BitOperatingSystem) {
-    $ahkExe = "AutoHotkey64.exe"
-    Write-Host "Detected 64-bit system, looking for $ahkExe"
-} else {
-    $ahkExe = "AutoHotkey32.exe"
-    Write-Host "Detected 32-bit system, looking for $ahkExe"
-}
-# Write-Host "Looking for $ahkExe"
-
-$commonPaths = @(
-    "${env:ProgramFiles}\AutoHotkey\$ahkExe",
-    "${env:ProgramFiles(x86)}\AutoHotkey\$ahkExe",
-    "${env:LOCALAPPDATA}\Programs\AutoHotkey\v2\$ahkExe"
-)
-    
-    foreach ($path in $commonPaths) {
-		# Write-Host $path
-        if (Test-Path $path) {
-            Write-Host "Found AutoHotkey at: $path" -ForegroundColor Green
-            return $path
-        }
+    $commonPathResult = Test-CommonAutoHotkeyPaths
+    if ($commonPathResult) {
+        return $commonPathResult
     }
 
     # 5. Not found - Offer download, then prompt user
@@ -119,18 +137,10 @@ $commonPaths = @(
                 }
 
                 # Re-Check common Program Files paths
-                $commonPathsAfterInstall = @( # Focus on standard install locations
-                    "${env:ProgramFiles}\AutoHotkey\AutoHotkey.exe",
-                    "${env:ProgramFiles(x86)}\AutoHotkey\AutoHotkey.exe",
-                    "${env:ProgramFiles}\AutoHotkey\v2\AutoHotkey.exe",
-                    "${env:ProgramFiles(x86)}\AutoHotkey\v2\AutoHotkey.exe"
-                )
-                foreach ($pathAfter in $commonPathsAfterInstall) {
-                    if (Test-Path $pathAfter) {
-                        Write-Host "Found AutoHotkey at: $pathAfter after installation" -ForegroundColor Green
-                        Remove-Item $tempSetupFile -ErrorAction SilentlyContinue
-                        return $pathAfter
-                    }
+                $commonPathAfterInstall = Test-CommonAutoHotkeyPaths "after installation"
+                if ($commonPathAfterInstall) {
+                    Remove-Item $tempSetupFile -ErrorAction SilentlyContinue
+                    return $commonPathAfterInstall
                 }
                 
                 Write-Host "AutoHotkey may have been installed, but its path could not be automatically found."
