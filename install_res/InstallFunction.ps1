@@ -1,9 +1,15 @@
 # On nomme autrement que juste "Install.ps1" car il nous arrivait de lancer le mauvais, quand une exécution incomplète nous laissait dans install_res.
 function Install-WPD {
 param(
-    [string]$ConfigPath = "$env:LocalAppData\wProjectDesktop\config",
+    [string]$ConfigPath, # Pas de default ici car on veut savoir s'il a été mis manuellement ; pour ne pas demander la permission de le créer le cas échéant
     [switch]$DryRun
 )
+
+if (-not $ConfigPath) {
+   $ConfigPath = "$env:LocalAppData\wProjectDesktop\config"
+    $DefaultConfig = $true
+}
+
 Push-Location # On fait des Set-Location pour simplifier ce script, mais c'est perturbant pour l'utilisateur de finir ailleurs que là où il a lancé .\Install.ps1.
 
 Set-Location (Join-Path $PSScriptRoot ..) # Might be ran from somewhere else.
@@ -111,7 +117,7 @@ if (-not $DryRun) {
 
 # On pourrait vouloir faire plutôt si l'utilisateur tape souvent un mauvais chemin ici... mais on veut que $InstallDir ait déjà été créé. Pour ne pas avoir à gérer les cas où $ConfigPath y est situé.
 # User may have created the config directory before, for instance in their dotfiles.
-if (-not (Test-Path $ConfigPath) -and -not $DryRun) {
+if (-not (Test-Path $ConfigPath) -and -not $DryRun -and -not $DefaultConfig) {
     $response = Read-Host "Config directory '$ConfigPath' does not exist. Create it? (y/n)"
     if ($response -match '^[Yy]') {
     New-Item -ItemType Directory -Path $ConfigPath | Out-Null
