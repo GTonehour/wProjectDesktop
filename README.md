@@ -10,6 +10,16 @@ wProjectDesktop is a light and open-source solution that displays each project i
 
 [VIDEO]
 
+## Installation
+### Binary release
+Coming soon.
+### Manual
+- Install [AutoHotkey v2](www.autohotkey.com/about)
+- ~~~ps1
+  git clone https://github.com/GTonehour/wProjectDesktop.git
+  .\wProjectDesktop\Install.ps1 # -ConfigPath path\to\config
+  ~~~
+
 ## Usage
 
 Projects are the directories you [configured](#projects), for instance %USERPROFILE%\projects subfolders.
@@ -48,16 +58,6 @@ But also drawbacks:
 - Each WM implements its own thing
 - Limited adoption means limited compatibility with other apps
 
-## Installation
-### Binary release
-Coming soon.
-### Manual
-- Install [AutoHotkey v2](www.autohotkey.com/about)
-- ~~~ps1
-  git clone https://github.com/GTonehour/wProjectDesktop.git
-  .\wProjectDesktop\Install.ps1 # -ConfigPath path\to\config
-  ~~~
-
 ## Features
 - Alt+Tab focuses Windows related only to your current project.
 - [Hotkey (F1 by default)](#hotkey) to call the command palette from everywhere.
@@ -76,6 +76,7 @@ Coming soon.
 Coming soon.
 
 ## Comparisons
+Coming soon
 ### FlowLauncher
 ### rofi (Linux)
 
