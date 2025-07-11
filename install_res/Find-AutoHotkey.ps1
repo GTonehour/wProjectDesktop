@@ -73,7 +73,6 @@ $commonPaths = @(
         Write-Host "Attempting to download and install AutoHotkey v2..."
         $tempSetupFile = Join-Path $env:TEMP "ahk-v2-setup.exe" # Download to a temporary path
         
-        try {
             # Ensure Download-VerifiedExecutable is defined in your script or dot-sourced
             Download-VerifiedExecutable -Name "AutoHotkey v2 Setup" `
                 -Url "https://www.autohotkey.com/download/ahk-v2.exe" `
@@ -82,17 +81,17 @@ $commonPaths = @(
 
             if (Test-Path $tempSetupFile) {
                 Write-Host "AutoHotkey setup downloaded successfully: $tempSetupFile" -ForegroundColor Green
-                Write-Host "Attempting silent installation. This may require administrator privileges."
+                Write-Host "Installation requires administrator privileges."
                 
                 # Silent install. /S is for silent. It will install to the default location.
                 # The default location is usually C:\Program Files\AutoHotkey
                 try {
-                    Start-Process -FilePath $tempSetupFile -ArgumentList "/S" -Wait -Verb RunAs -ErrorAction Stop
-                    Write-Host "AutoHotkey installation process completed." -ForegroundColor Green
+                    Start-Process -FilePath $tempSetupFile -Wait -Verb RunAs -ErrorAction Stop # /S ne marchait pas, j'essaie /silent
+                    # Pas de log ici car rien ne dit encore que l'installation a fonctionné
+                    #Write-Host "AutoHotkey installation process completed." -ForegroundColor Green
                 }
                 catch {
-                    Write-Host "Silent installation failed. $($_.Exception.Message)" -ForegroundColor Red
-                    Write-Host "You might need to run PowerShell as an Administrator, or the installer was cancelled."
+                    Write-Host "Installation failed. $($_.Exception.Message)" -ForegroundColor Red
                     Write-Host "Proceeding to manual path input."
                     # Fall through to manual input
                 }
@@ -139,10 +138,6 @@ $commonPaths = @(
             } else {
                 Write-Host "Download function did not result in the expected file: $tempSetupFile." -ForegroundColor Red
             }
-        }
-        catch {
-            Write-Host "Failed to download or initiate install for AutoHotkey: $($_.Exception.Message)" -ForegroundColor Red
-        }
         finally {
             if (Test-Path $tempSetupFile) {
                 Remove-Item $tempSetupFile -ErrorAction SilentlyContinue # Ensure cleanup
