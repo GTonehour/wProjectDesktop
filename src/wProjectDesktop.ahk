@@ -52,9 +52,10 @@ switch exitCode {
         MsgBox("Unexpected error: " . exitCode)
 }
 } else { ; If the user alt+F4d it for some reason
-    ps1Path := EnvGet("LocalAppData") . '\wProjectDesktop\src\Start-Term.ps1'
-    if FileExist(ps1Path) {
-        RunWait 'powershell.exe -ExecutionPolicy Bypass -File ' . ps1Path
+    executableFile := EnvGet("LocalAppData") . '\wProjectDesktop\startup_executable.txt'
+    if FileExist(executableFile) {
+        executablePath := FileRead(executableFile, "UTF-8")
+        RunWait 'powershell.exe -ExecutionPolicy Bypass -File "' . executablePath . '"'
     } else {
         MsgBox("wProjectDesktop not installed.") ; Typiquement si on n'avait lancé qu'en DevMode.
     }

@@ -3,6 +3,9 @@ function Register-Startup {
 		$FullPathToStartupFile
 	)
 	
+	# Save the executable path to a text file
+	Set-Content -Path "$env:LocalAppData\wProjectDesktop\startup_executable.txt" -Value $FullPathToStartupFile -Encoding UTF8
+	
 	Write-Host "Choose startup method:" -ForegroundColor Cyan
 	Write-Host "1. Standard startup"
 	Write-Host "2. Faster startup, requires admin"

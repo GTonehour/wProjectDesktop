@@ -13,3 +13,9 @@ if (-not (Test-Path $configFolder)) {
 	Out-File -FilePath "$configFolder\configPath.txt"
 	Out-File -FilePath "$configFolder\projects.json"
 }
+
+# We may want F1 to run the script in $env:localappdata\wProjectDesktop, or in our local folder. Register-Startup will store which one we want in $localappdata\wProjectDesktop. Why there: because where else would we tell the ahk script to look?
+$wpdDir = "$env:LocalAppData\wProjectDesktop"
+if (-not (Test-Path $wpdDir)) {
+	New-Item -Path $wpdDir -ItemType Directory -Force
+}
