@@ -1,4 +1,5 @@
 function Invoke-Command {
-    param($project, $projectPath, $wtCommand)
-    Invoke-Expression "$wtCommand --title `"lazygit $project`" lazygit"
+    param($project, $projectPath, $NewTerminalCmd)
+    $terminalCommand = & $NewTerminalCmd "lazygit" "lazygit $project"
+    Invoke-Expression $terminalCommand
 }

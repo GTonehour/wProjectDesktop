@@ -1,4 +1,5 @@
 function Invoke-Command {
-    param($project, $projectPath, $wtCommand)
-    Invoke-Expression "$wtCommand --title `"Claude Code $project`" wsl bash -i -c `"claude`""
+    param($project, $projectPath, $NewTerminalCmd)
+    $terminalCommand = & $NewTerminalCmd "wsl bash -i -c `"claude`"" "Claude Code $project"
+    Invoke-Expression $terminalCommand
 }

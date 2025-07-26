@@ -1,4 +1,5 @@
 function Invoke-Command {
-    param($project, $projectPath, $wtCommand)
-    Invoke-Expression "$wtCommand --title `"Gemini $project`" powershell gemini"
+    param($project, $projectPath, $NewTerminalCmd)
+    $terminalCommand = & $NewTerminalCmd "powershell gemini" "Gemini $project"
+    Invoke-Expression $terminalCommand
 }

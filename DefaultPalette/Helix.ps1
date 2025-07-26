@@ -1,4 +1,5 @@
 function Invoke-Command {
-    param($project, $projectPath, $wtCommand)
-    Invoke-Expression "$wtCommand --title `"Helix $project`" powershell hx ."
+    param($project, $projectPath, $NewTerminalCmd)
+    $terminalCommand = & $NewTerminalCmd "powershell hx ." "Helix $project"
+    Invoke-Expression $terminalCommand
 }

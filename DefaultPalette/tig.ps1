@@ -1,4 +1,5 @@
 function Invoke-Command {
-    param($project, $projectPath, $wtCommand)
-    Invoke-Expression "$wtCommand --title `"tig $project`" tig"
+    param($project, $projectPath, $NewTerminalCmd)
+    $terminalCommand = & $NewTerminalCmd "tig" "tig $project"
+    Invoke-Expression $terminalCommand
 }

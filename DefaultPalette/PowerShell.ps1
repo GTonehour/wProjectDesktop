@@ -1,4 +1,4 @@
 function Invoke-Command {
-    param($project, $projectPath, $wtCommand)
-    Invoke-Expression "$wtCommand --title `"Terminal $project`""
+    param($project, $projectPath, $NewTerminalCmd)
+    Invoke-Expression "wt -d $projectPath --title `"PowerShell $project`""
 }

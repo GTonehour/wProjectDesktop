@@ -52,7 +52,16 @@ while($true){
         $projectToDisplay = "$project (no project)"
     }
 
-    $wtCommand = "wt -d $projectPath"
+    function New-TerminalCmd {
+        param([string]$Command, [string]$Title = $null)
+        if ($Title) {
+            # return "wt -d $projectPath --title `"$Title`" $Command"
+            return "alacritty --working-directory $projectPath --title `"$Title`" -e $Command"
+        } else {
+            # return "wt -d $projectPath $Command"
+            return "alacritty --working-directory $projectPath -e $Command"
+        }
+    }
     # -w $project # Si on veut nommer une fenêtre dans le but d'y ouvrir d'autres onglets. (Pour le titre, voir --title)
 
     # Load commands from DefaultPalette and config/Palette folders
@@ -137,7 +146,7 @@ $null = $cmds.Add([PSCustomObject]@{
                 try {
                     # Source the script and call Invoke-Command function
                     . $selectedCmd.ScriptPath
-                    Invoke-Command -project $project -projectPath $projectPath -wtCommand $wtCommand
+                    Invoke-Command -project $project -projectPath $projectPath -NewTerminalCmd ${function:New-TerminalCmd}
                 } catch {
                     Write-Host "Command failed: $($_.Exception.Message)" -ForegroundColor Red
                     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
