@@ -53,14 +53,22 @@ while($true){
     }
 
     function New-TerminalCmd {
-        param([string]$Command, [string]$Title = $null)
-        if ($Title) {
-            # return "wt -d $projectPath --title `"$Title`" $Command"
-            return "alacritty --working-directory $projectPath --title `"$Title`" -e $Command"
-        } else {
-            # return "wt -d $projectPath $Command"
-            return "alacritty --working-directory $projectPath -e $Command"
-        }
+       param(
+           [string]$Command,
+           [string]$Title,
+           [string]$Terminal = "alacritty"
+       )
+   
+       $baseCmd = if ($Terminal -eq "wt") {
+           "wt -d $projectPath"
+       } else {
+           "alacritty --working-directory $projectPath"
+       }
+   
+       if ($Title) { $baseCmd += if ($Terminal -eq "wt") { " --title `"$Title`"" } else { " --title `"$Title`"" } }
+       if ($Command) { $baseCmd += if ($Terminal -eq "wt") { " $Command" } else { " -e $Command" } }
+   
+       return $baseCmd
     }
     # -w $project # Si on veut nommer une fenêtre dans le but d'y ouvrir d'autres onglets. (Pour le titre, voir --title)
 
