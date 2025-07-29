@@ -46,7 +46,8 @@ In both cases, you end up having multiple windows per project, all in the same d
 WM (GlazeWM, Komorebi, workspacer...) often implement "workspaces", which are sort of a reimplementation of Windows' native Virtual Desktops.
 
 They're generally not compatible in any way with Windows Virtual Desktop:
-- Komorebi explicitely doesn't try to support compatibility with Windows VD (https://github.com/LGUG2Z/komorebi/issues/15#issuecomment-901605163)
+- Komorebi explicitely doesn't try to support compatibility with Windows VD: https://github.com/LGUG2Z/komorebi/issues/15#issuecomment-901605163
+- GlazeWM makes Tasks View unusable: https://github.com/glzr-io/glazewm/issues/1142
 
 This have advantages:
 - The WM developers are free to add all the features they want, not limited by the [lack of a proper API for Windows Virtual Desktop](https://devblogs.microsoft.com/oldnewthing/20201123-00/?p=104476).
@@ -57,6 +58,13 @@ But also drawbacks:
   - The nice Tasks view (Win+Tab) UI, which allows to nicely move windows between desktops, show a window on all desktops, etc.
 - Each WM implements its own thing
 - Limited adoption means limited compatibility with other apps
+
+Some WM **are** compatible with native Virtual Desktops (hence with wProjectDesktop):
+- Workspacer: https://github.com/workspacer/workspacer/issues/277 (used by wProjectDesktop's author)
+- FancyWM, according to [this comment](https://github.com/glzr-io/glazewm/issues/169#issue-1446572438)
+- Jwno?
+- LightWM?
+- Whim?
 
 ## Features
 - Alt+Tab focuses Windows related only to your current project.
