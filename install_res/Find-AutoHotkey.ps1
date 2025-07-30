@@ -91,8 +91,8 @@ function Find-AutoHotkeyPath {
         Write-Host "Attempting to download and install AutoHotkey v2..."
         $tempSetupFile = Join-Path $env:TEMP "ahk-v2-setup.exe" # Download to a temporary path
         
-            # Ensure Download-VerifiedExecutable is defined in your script or dot-sourced
-            Download-VerifiedExecutable -Name "AutoHotkey v2 Setup" `
+            # Ensure Get-VerifiedExecutable is defined in your script or dot-sourced
+            Get-VerifiedExecutable -Name "AutoHotkey v2 Setup" `
                 -Url "https://www.autohotkey.com/download/ahk-v2.exe" `
                 -OutputPath $tempSetupFile `
                 -ExpectedChecksum "FD55129CBD356F49D2151E0A8B9662D90D2DBBB9579CC2410FDE38DF94787A3A"

@@ -1,4 +1,4 @@
-function Download-VerifiedExecutable {
+function Get-VerifiedExecutable {
     param(
         [string]$Name,
         [string]$Url,

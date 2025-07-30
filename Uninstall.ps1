@@ -4,14 +4,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# Define installation directory (must match Uninstall.ps1)
-$InstallDir = "$env:LOCALAPPDATA\wProjectDesktop"
-
-Write-Host "If wProjectDesktop is currently running, please close the command palette (focus it, then Alt+F4) then exit 'wProjectDesktop.ahk' (in the system tray, right-click, exit). Then press Enter to uninstall." -NoNewLine
-Read-Host
-
-# Check if Uninstall.ps1 exists
-$UninstallScript = "$InstallDir\src\Start-Uninstall.ps1"
+# Pas forcément dans InstallDir quand on n'avait installé qu'avec Setup-DevDir
+$UninstallScript = "$PSScriptRoot\src\Start-Uninstall.ps1"
 if (-not (Test-Path $UninstallScript)) {
     Write-Host "Uninstall script not found at: $UninstallScript" -ForegroundColor Red
     Write-Host "wProjectDesktop may not be installed or already removed" -ForegroundColor Yellow

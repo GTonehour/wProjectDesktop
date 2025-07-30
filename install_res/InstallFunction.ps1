@@ -13,7 +13,6 @@ if (-not $ConfigPath) {
 Push-Location # On fait des Set-Location pour simplifier ce script, mais c'est perturbant pour l'utilisateur de finir ailleurs que là où il a lancé .\Install.ps1.
 
 Set-Location (Join-Path $PSScriptRoot ..) # Might be ran from somewhere else.
-. .\install_res\Download-VerifiedExecutable.ps1
 . .\install_res\Find-AutoHotkey.ps1
 . .\install_res\Register-Startup.ps1
 
@@ -57,15 +56,8 @@ else {
     exit 1
 }
 
-# 🍔 Create install installation directory
-if ($DryRun) {
-    Write-Host "[DRY RUN] Would create installation directory: $InstallDir"
-} else {
-    if (-not (Test-Path $InstallDir)) {
-        New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
-        Write-Host "Created installation directory: $InstallDir" -ForegroundColor Green
-    }
-}
+.\install_res\New-InstallDir.ps1
+New-InstallDir -DryRun $DryRun -InstallDir $InstallDir
 
 if ($DryRun) {
     Write-Host "[DRY RUN] Would change to installation directory: $InstallDir"
@@ -86,7 +78,6 @@ if (-not $DryRun) {
     Copy-Item -Path "Uninstall.ps1" -Destination $InstallDir -Force # On ne le mets pas dans src, pour qu'il soit visible de quelqu'un qui le chercherait dans le dossier cloné ; mais on le copie quand même, pour qu'il puisse être trouvé là-bas.
     New-Item -ItemType "Directory" "$InstallDir\State" | Out-Null
     New-Item -ItemType "Directory" "$InstallDir\State\MRU" | Out-Null
-	New-Item -ItemType "Directory" "$InstallDir\bin" | Out-Null
 	Out-File -FilePath "$InstallDir\State\CurrentProject.txt"
 }
     Write-Host "Successfully copied all project files" -ForegroundColor Green
@@ -99,23 +90,7 @@ if (-not $DryRun) {
     Install-Module VirtualDesktop -Scope CurrentUser # Scoped to user, to avoid needing admin rights.
 }
 
-## 🍔 exe (for direct and quick use in AHK)
-
-# We compile it ourselves from their open-source code, for security reasons.
-# The exe is only ~150 Kb, so we could include it directly in our repo. But making our Install.ps1 download it and compare against a pre-calculated checksum would:
-# - complicate our code
-# * add 150 Kb to our repo
-# + but users could ensure we're actually downloading from a legitimate repo without having to calculate both cheksums.
-# Let's favor security.
-
-if (-not $DryRun) {
-    Download-VerifiedExecutable -Name "MScholtes/VirtualDesktop executable" `
-        -Url "https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe" `
-        -OutputPath "$InstallDir\bin\VirtualDesktop.exe" `
-        -ExpectedChecksum "F3799B4A542BAD7F0F2267E224BF6885F0599E444EF58394D449FD30269E3014"
-}
-
-# On pourrait vouloir faire plutôt si l'utilisateur tape souvent un mauvais chemin ici... mais on veut que $InstallDir ait déjà été créé. Pour ne pas avoir à gérer les cas où $ConfigPath y est situé.
+# On pourrait vouloir faire plus tôt si l'utilisateur tape souvent un mauvais chemin ici... mais on veut que $InstallDir ait déjà été créé. Pour ne pas avoir à gérer les cas où $ConfigPath y est situé.
 # User may have created the config directory before, for instance in their dotfiles.
 if (-not (Test-Path $ConfigPath) -and -not $DryRun -and -not $DefaultConfig) {
     $response = Read-Host "Config directory '$ConfigPath' does not exist. Create it? (y/n)"

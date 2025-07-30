@@ -72,7 +72,7 @@ Some WM **are** compatible with native Virtual Desktops (hence with wProjectDesk
 - Opens a dedicated desktop for each project.
 
 ## Configuration
-Configuration folder will be in `%LocalAppData%\wProjectDesktop\config` by default. You can replace it by a custom one using the `-customConfig` parameter during installation (e.g., `.\Install.ps1 -customConfig "C:\MyCustomConfig"`).
+Configuration folder will be in `%LocalAppData%\wProjectDesktop\config` by default. You can replace it by a custom one using the `-customConfig` parameter during installation (e.g., `.\Install.ps1 -customConfig "C:\MyCustomConfig"`), or by setting the `wPD_Config_Path` environment variable.
 
 ## Projects
 project.json

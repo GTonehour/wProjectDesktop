@@ -1,8 +1,10 @@
 function Get-ConfigPath {
-    $installDir = "$env:LocalAppData\wProjectDesktop"
-    $configPathFile = "$installDir\configPath.txt"
-    $configPath = Get-Content $configPathFile -Raw | ForEach-Object { $_.Trim() }
-    return $configPath
+    # We thought of writing the configPath at install time. But an environment variable may be a good idea too, because easily modifiable. Especially in DevMode.
+    $ConfigEnvVar = [Environment]::GetEnvironmentVariable("wPD_Config_Path", "User")
+    if ($ConfigEnvVar) {
+        return $ConfigEnvVar
+    }
+    return Get-Content "$env:LocalAppData\wProjectDesktop\configPath.txt" -Raw | ForEach-Object { $_.Trim() }
 }
 
 function Get-ProjectList {

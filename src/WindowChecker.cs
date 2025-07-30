@@ -19,24 +19,18 @@ public class Win32
         bool found = false;
         EnumWindows(delegate(IntPtr hWnd, IntPtr lParam)
         {
-    if (!IsWindowVisible(hWnd)) return true; // Continue
 
-    StringBuilder sb = new StringBuilder(256);
-    GetWindowText(hWnd, sb, sb.Capacity);
-    string windowTitle = sb.ToString();
+            StringBuilder sb = new StringBuilder(256);
+            GetWindowText(hWnd, sb, sb.Capacity);
+            string windowTitle = sb.ToString();
     
-    if (!string.IsNullOrEmpty(windowTitle))
-    {
-        // Console.WriteLine("Found window: '" + windowTitle + "'");
-    }
-    
-    if (windowTitle.Equals(titleSubstring, StringComparison.OrdinalIgnoreCase))
-    {
-        found = true;
-        return false; // Stop
-    }
-    return true; // Continue
-}, IntPtr.Zero);
+            if (windowTitle.Equals(titleSubstring, StringComparison.OrdinalIgnoreCase))
+            {
+                found = true;
+                return false; // Stop
+            }
+            return true; // Continue
+        }, IntPtr.Zero);
         return found;
     }
 }

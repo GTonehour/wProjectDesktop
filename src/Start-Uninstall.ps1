@@ -19,11 +19,17 @@ if (-not (Test-Path $InstallDir)) {
     Write-Host "Installation found at: $InstallDir" -ForegroundColor Green
     
     if (-not $Force) {
-        $confirm = Read-Host "Remove installation directory and all files? (y/N)"
+        Write-Host "If wProjectDesktop is currently running, please:
+- focus the command palette then Alt+F4 to close it
+- in the system tray, hover over the AutoHotKey icon for 'wProjectDesktop.ahk'. Righ-click on it and select 'Exit'
+Then press Enter to continue uninstall." -NoNewLine
+        Read-Host
+
+        <# $confirm = Read-Host "Remove installation directory and all files? (y/N)"
         if ($confirm -notmatch "^[Yy]") {
             Write-Host "Uninstall cancelled"
             exit 0
-        }
+        } #>
     }
     
     try {
