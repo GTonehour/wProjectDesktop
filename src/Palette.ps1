@@ -56,7 +56,7 @@ while($true){
        param(
            [string]$Command,
            [string]$Title,
-           [string]$Terminal = "alacritty"
+           [string]$Terminal = "wt"
        )
    
        $baseCmd = if ($Terminal -eq "wt") {
