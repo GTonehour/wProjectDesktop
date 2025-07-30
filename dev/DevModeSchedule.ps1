@@ -1,3 +1,6 @@
+# Register-startup will write startup_executable.txt.
+. $PSScriptRoot\..\install_res\Setup-DevDir.ps1
+
 . $PSScriptRoot\..\install_res\Register-Startup.ps1
 Register-Startup $PSScriptRoot\DevMode.ps1
 
@@ -9,7 +12,7 @@ else {
     throw "Failed to register startup task (exit code: $LASTEXITCODE)"
 }
 
-$response = Read-Host "Run now? (y/n)"
+$response = Read-Host "Run DevMode now? (y/n)"
 if ($response -eq "y" -or $response -eq "yes") {
 	& $PSScriptRoot\DevMode.ps1
 }
