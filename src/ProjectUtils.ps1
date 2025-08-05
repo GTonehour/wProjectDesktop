@@ -7,6 +7,18 @@ function Get-ConfigPath {
     return Get-Content "$env:LocalAppData\wProjectDesktop\configPath.txt" -Raw | ForEach-Object { $_.Trim() }
 }
 
+function Get-Settings {
+    $configDir = Get-ConfigPath
+    $settingsPath = "$configDir\settings.json"
+    
+    if (Test-Path $settingsPath) {
+        $settings = Get-Content $settingsPath | ConvertFrom-Json
+        return $settings
+    }
+    
+    return $null
+}
+
 function Get-ProjectList {
 $configDir = Get-ConfigPath
 $configPath = "$configDir\projects.json"

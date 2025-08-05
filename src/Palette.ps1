@@ -52,11 +52,15 @@ while($true){
         $projectToDisplay = "$project (no project)"
     }
 
+    # Get terminal configuration from settings.json
+    $settings = Get-Settings
+    $defaultTerminal = if ($settings -and $settings.terminal) { $settings.terminal } else { "wt" }
+    
     function New-TerminalCmd {
        param(
            [string]$Command,
            [string]$Title,
-           [string]$Terminal = "wt"
+           [string]$Terminal = $defaultTerminal
        )
    
        $baseCmd = if ($Terminal -eq "wt") {
