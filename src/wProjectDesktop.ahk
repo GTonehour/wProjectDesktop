@@ -9,8 +9,13 @@ if !FileExist(exePath)
     ExitApp
 }
 
-#m:: SwitchToDesktop("music")
-#a:: SwitchToDesktop("docs") ; #d est déjà pris.
+; #m:: SwitchToDesktop("music")
+; #a:: SwitchToDesktop("docs") ; #d est déjà pris.
+
+!q::{
+    global exePath
+    exitCode := Run('remove_desktop.bat', , "Hide")
+}
 
 SwitchToDesktop(desktopName)
 {
