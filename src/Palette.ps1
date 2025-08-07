@@ -45,7 +45,7 @@ function Load-ScriptsFromDirectory {
         [hashtable]$Collection # Passed by reference so the function can modify it.
         )
     
-    Write-Host "Load scripts from $Path"
+    # Write-Host "Load scripts from $Path"
     $scriptFiles = Get-ChildItem -Path $Path -File
     foreach ($file in $scriptFiles) {
         $name = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
@@ -64,7 +64,6 @@ function Load-ScriptsFromDirectory {
                 Name         = $name
                 ScriptPath   = $file.FullName
                 Type         = $type
-                # Note: The Get-MRUTimestamp function is kept as in your original logic
                 MRUTimestamp = Get-MRUTimestamp -ScriptName $name 
             }
         }
@@ -79,11 +78,8 @@ function Invoke-SelectedCommand {
         [hashtable]$commands
     )
     
-    # $selectedCommand
-    $commands.Values | Select-Object Name | Write-Host
     $selectedCmd = $commands.Values | Where-Object {$_.Name -eq $selectedCommand}
     Update-MRU -ScriptName $selectedCmd.Name
-    Write-Host $selectedCmd
     Write-Host "``$($selectedCmd.Name)``..." # Rassure le temps que neovide, par exemple, s'ouvre.
     
     if ($selectedCmd.Type -eq "Bash") {
@@ -93,9 +89,28 @@ function Invoke-SelectedCommand {
 		# wt -p "Git Bash" -d "$projectPath" -- bash $wslpath
     } elseif ($selectedCmd.Type -eq "PowerShell") {
         try {
-            # Source the script and call Invoke-Command function
-            . $selectedCmd.ScriptPath
-            return Invoke-Command -project $project -projectPath $projectPath -NewTerminalCmd ${function:New-TerminalCmd}
+            # 1. Get the script's help content and metadata
+            $help = Get-Help $selectedCmd.ScriptPath -Full # NOTES prints only with the "Full" flag
+            $metadata = @{}
+            # Parse the .NOTES section into a hashtable
+            $help.alertSet.alert.Text -split "`r`n|`r|`n" | ForEach-Object {
+                if ($_ -match '(.+?)\s*=\s*(.+)') {
+                    $metadata[$matches[1].Trim()] = $matches[2].Trim()
+                }
+            }
+
+            # 2. Check the metadata to decide how to run the script
+            if ($metadata.RequiresNewTerminal -eq 'true') {
+                # Run in a new Windows Terminal tab
+                $title = if ($metadata.Title) { $metadata.Title } else { "$selectedCmd.Name - $project" }
+                $command = "powershell.exe -NoProfile -File `"$($selectedCmd.ScriptPath)`" -project `"$project`" -projectPath `"$projectPath`""
+                wt -p "PowerShell" -d "$projectPath" --title "$title" -- $command
+            } else {
+                # Run in the current console
+                # The script will inherit the variables from this scope
+                . $selectedCmd.ScriptPath -project $project -projectPath $projectPath
+            }
+            # The return statement is no longer needed here
         } catch {
             Write-Host "Command failed: $($_.Exception.Message)" -ForegroundColor Red
             $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
@@ -106,11 +121,10 @@ function Invoke-SelectedCommand {
 $switchedKey = 'f12'
 
 function Get-PaletteCommands {
-    param (
+   param (
         [string]$wPdDir,
         [bool]$loadTestsPalette
     )
-    # Write-Host $wPdDir
     $configPalettePath = Join-Path (Get-ConfigPath) "Palette"
     $commands = @{}
     Load-ScriptsFromDirectory -Path (Join-Path $wPdDir "DefaultPalette") -Collection $commands
@@ -118,7 +132,6 @@ function Get-PaletteCommands {
     if($loadTestsPalette){
         Load-ScriptsFromDirectory -Path (Join-Path $wPdDir "testsPalette") -Collection $commands
     }
-    Write-Host "Found $($commands.Count) commands"
     return $commands
 }
 
@@ -158,10 +171,10 @@ function Run-Palette {
     
         # -w $project # Si on veut nommer une fenêtre dans le but d'y ouvrir d'autres onglets. (Pour le titre, voir --title)
 
-        $commands = Get-PaletteCommands -wPdDire $wProjectDesktop
+        $commands = Get-PaletteCommands -wPdDir $wProjectDesktop
     
         # Sort commands: MRU first (most recent first), then alphabetically for untracked
-        $cmds = $commands.Value | Sort-Object @{
+        $cmds = $commands.Values | Sort-Object @{
             Expression = { if ($_.MRUTimestamp) { 0 } else { 1 } }
         }, @{
             Expression = { if ($_.MRUTimestamp) { -$_.MRUTimestamp.Ticks } else { 0 } }

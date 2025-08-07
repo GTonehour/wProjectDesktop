@@ -15,7 +15,6 @@ Describe 'Palette' {
     }
     It 'executes command correctly' {
         $commands = Get-PaletteCommands -wPdDir (Join-Path $PSScriptRoot ..) -loadTestsPalette $true
-        # Write-Host "Found $($commands.Count) commands."
         $result = Invoke-SelectedCommand -selectedCommand 'simple_print' -commands $commands
         $result | Should -Be 'PALETTE_TEST_SUCCESS'
     }
