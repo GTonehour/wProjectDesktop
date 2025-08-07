@@ -5,6 +5,10 @@ BeforeAll {
 }
 
 Describe 'Palette' {
+    $terminals = @(
+        @{ Terminal = "wt" }
+        @{ Terminal = "alacritty" }
+    )
     BeforeEach {
         function fzf.exe { # Plante avec Mock, peut-être parce que pas un cmdlet.
             return 'simple_print.ps1'
@@ -13,10 +17,26 @@ Describe 'Palette' {
 		Mock Get-ConfigPath { return Join-Path $PSScriptRoot .. DevModeConfig }
 		Mock cls { }
     }
-    It 'executes command correctly' {
+
+    AfterEach {
+        # Clean up test files after each test
+        Get-ChildItem -Path $env:TEMP -Filter "pester-*.txt" | Remove-Item -Force -ErrorAction SilentlyContinue
+    }    
+    
+    It 'executes simple script with <Terminal>)' -ForEach $terminals {
         $commands = Get-PaletteCommands -wPdDir (Join-Path $PSScriptRoot ..) -loadTestsPalette $true
-        # Write-Host "Found $($commands.Count) commands."
-        $result = Invoke-SelectedCommand -selectedCommand 'simple_print' -commands $commands
+        $result = Invoke-SelectedCommand -selectedCommand 'simple_print' -commands $commands -project "Test" -projectPath "." -Terminal alacritty
         $result | Should -Be 'PALETTE_TEST_SUCCESS'
     }
+    
+    It 'script containing space in name spawns and executes' -ForEach $terminals {
+        $nonce = $(New-Guid)
+        
+        $commands = Get-PaletteCommands -wPdDir (Join-Path $PSScriptRoot ..) -loadTestsPalette $true
+        Invoke-SelectedCommand -selectedCommand 'spawning write with spaces' -commands $commands -project $nonce -projectPath "." -Terminal alacritty
+        
+        Start-Sleep -Seconds 3
+        
+        Test-Path (Join-Path $env:Temp "pester-$nonce.txt") | Should -Be $true
+     }
 }

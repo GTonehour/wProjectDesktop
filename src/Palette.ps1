@@ -25,27 +25,28 @@ function New-TerminalCmd {
    param(
        [string]$Command,
        [string]$Title,
-       [string]$Terminal = $defaultTerminal
+       [string]$project,
+       [string]$projectPath,
+       [string]$Terminal
    )
-
-   $baseCmd = if ($Terminal -eq "wt") {
-       "wt -d $projectPath"
+   if ($Terminal -eq "wt") {
+    $executableCommand = "wt -d `"$projectPath`" --title `"$Title`" -- $Command"
+    # Start-Process -FilePath wt -ArgumentList @("--title", "a", "powershell.exe -NoProfile -File `"C:\Users\mmi2\projects\wProjectDesktop\DefaultPalette\Claude Code.ps1`"")
    } else {
-       "alacritty --working-directory $projectPath"
+    $executableCommand = "alacritty --working-directory `"$projectPath`" --title `"$Title`" -e `"$($Command -replace '`"', '``"')`""
+    # alacritty --working-directory "C:\Users\mmi2\projects\wProjectDesktop" --title "Claude Code - wProjectDesktop" -e "powershell.exe -NoProfile -File `"C:\Users\mmi2\projects\wProjectDesktop\DefaultPalette\Claude Code.ps1`""
    }
-
-   if ($Title) { $baseCmd += if ($Terminal -eq "wt") { " --title `"$Title`"" } else { " --title `"$Title`"" } }
-   if ($Command) { $baseCmd += if ($Terminal -eq "wt") { " $Command" } else { " -e $Command" } }
-
-   return $baseCmd
+# Write-Host $executableCommand
+# Warning, visitor: trying to replace by "Start-Process" will be a hell you won't be able to /escape.
+Invoke-Expression -Command $executableCommand
 }
 
-function Load-ScriptsFromDirectory {
+function Get-ScriptsFromDirectory {
     param([string]$Path,
         [hashtable]$Collection # Passed by reference so the function can modify it.
         )
     
-    Write-Host "Load scripts from $Path"
+    # Write-Host "Load scripts from $Path"
     $scriptFiles = Get-ChildItem -Path $Path -File
     foreach ($file in $scriptFiles) {
         $name = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
@@ -64,7 +65,6 @@ function Load-ScriptsFromDirectory {
                 Name         = $name
                 ScriptPath   = $file.FullName
                 Type         = $type
-                # Note: The Get-MRUTimestamp function is kept as in your original logic
                 MRUTimestamp = Get-MRUTimestamp -ScriptName $name 
             }
         }
@@ -76,14 +76,12 @@ function Invoke-SelectedCommand {
         [string]$selectedCommand,
         [string]$project,
         [string]$projectPath,
-        [hashtable]$commands
+        [hashtable]$commands,
+        [string]$Terminal
     )
     
-    # $selectedCommand
-    $commands.Values | Select-Object Name | Write-Host
     $selectedCmd = $commands.Values | Where-Object {$_.Name -eq $selectedCommand}
     Update-MRU -ScriptName $selectedCmd.Name
-    Write-Host $selectedCmd
     Write-Host "``$($selectedCmd.Name)``..." # Rassure le temps que neovide, par exemple, s'ouvre.
     
     if ($selectedCmd.Type -eq "Bash") {
@@ -93,9 +91,28 @@ function Invoke-SelectedCommand {
 		# wt -p "Git Bash" -d "$projectPath" -- bash $wslpath
     } elseif ($selectedCmd.Type -eq "PowerShell") {
         try {
-            # Source the script and call Invoke-Command function
-            . $selectedCmd.ScriptPath
-            return Invoke-Command -project $project -projectPath $projectPath -NewTerminalCmd ${function:New-TerminalCmd}
+            # 1. Get the script's help content and metadata
+            $help = Get-Help $selectedCmd.ScriptPath -Full # NOTES prints only with the "Full" flag
+            $metadata = @{}
+            # Parse the .NOTES section into a hashtable
+            $help.alertSet.alert.Text -split "`r`n|`r|`n" | ForEach-Object {
+                if ($_ -match '(.+?)\s*=\s*(.+)') {
+                    $metadata[$matches[1].Trim()] = $matches[2].Trim()
+                }
+            }
+
+            # 2. Check the metadata to decide how to run the script
+            # Spwan true by default, because the most common, at least for defaultPalette scripts.
+            if ($metadata.Spawn -eq 'false') {
+                # Run in the current console
+                # The script will inherit the variables from this scope
+                $result = . $selectedCmd.ScriptPath -project $project -projectPath $projectPath
+                return $result
+            } else {
+                $title = if ($metadata.Title) { $metadata.Title } else { "$($selectedCmd.Name) - $project" }
+                $innerCommand = "powershell.exe -NoProfile -File `"$($selectedCmd.ScriptPath)`" -project `"$project`" -projectPath `"$projectPath`""
+                return New-TerminalCmd -Command $innerCommand -Title $title -projectPath $projectPath -Terminal $Terminal
+            }
         } catch {
             Write-Host "Command failed: $($_.Exception.Message)" -ForegroundColor Red
             $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
@@ -106,29 +123,30 @@ function Invoke-SelectedCommand {
 $switchedKey = 'f12'
 
 function Get-PaletteCommands {
-    param (
+   param (
         [string]$wPdDir,
         [bool]$loadTestsPalette
     )
-    # Write-Host $wPdDir
     $configPalettePath = Join-Path (Get-ConfigPath) "Palette"
     $commands = @{}
-    Load-ScriptsFromDirectory -Path (Join-Path $wPdDir "DefaultPalette") -Collection $commands
-    Load-ScriptsFromDirectory -Path $configPalettePath -Collection $commands
+    Get-ScriptsFromDirectory -Path (Join-Path $wPdDir "DefaultPalette") -Collection $commands
+    Get-ScriptsFromDirectory -Path $configPalettePath -Collection $commands
     if($loadTestsPalette){
-        Load-ScriptsFromDirectory -Path (Join-Path $wPdDir "testsPalette") -Collection $commands
+        Get-ScriptsFromDirectory -Path (Join-Path $wPdDir "testsPalette") -Collection $commands
     }
-    Write-Host "Found $($commands.Count) commands"
     return $commands
 }
 
-function Run-Palette {
+$settings = Get-Settings
+$Terminal = if ($settings -and $settings.terminal) { $settings.terminal } else { "wt" }
+
+function Show-Palette {
     while($true){
         if(-Not $keepOpened){
             Hide-Term
         }
         $keepOpened=$false
-        cls # Sinon on verra tous les "Executing" (et "Command failed") précédents le temps que la commande s'exécute. Pas juste avant le "executing" parce qu'on veut aussi effacer les "Not a project". Pas réussi à mock.
+        # Clear-Host # Sinon on verra tous les "Executing" (et "Command failed") précédents le temps que la commande s'exécute. Pas juste avant le "executing" parce qu'on veut aussi effacer les "Not a project". Pas réussi à mock.
         $project = Get-CurrentDesktop | Get-DesktopName # 27mai25: "FromDesktop" failed with "Object reference not set to an instance of an object." 1.5.10\VirtualDesktop.ps1:1687 char:42. A relaunch of startupDocs.ps1 fixed it.
         $projectList = Get-ProjectList
         $projectObj = $projectList | Where-Object { $_.Name -eq $project }
@@ -152,16 +170,12 @@ function Run-Palette {
             $projectToDisplay = "$project (no project)"
         }
 
-        # Get terminal configuration from settings.json
-        $settings = Get-Settings
-        $defaultTerminal = if ($settings -and $settings.terminal) { $settings.terminal } else { "wt" }
-    
         # -w $project # Si on veut nommer une fenêtre dans le but d'y ouvrir d'autres onglets. (Pour le titre, voir --title)
 
-        $commands = Get-PaletteCommands -wPdDire $wProjectDesktop
+        $commands = Get-PaletteCommands -wPdDir $wProjectDesktop
     
         # Sort commands: MRU first (most recent first), then alphabetically for untracked
-        $cmds = $commands.Value | Sort-Object @{
+        $cmds = $commands.Values | Sort-Object @{
             Expression = { if ($_.MRUTimestamp) { 0 } else { 1 } }
         }, @{
             Expression = { if ($_.MRUTimestamp) { -$_.MRUTimestamp.Ticks } else { 0 } }
@@ -180,7 +194,7 @@ function Run-Palette {
             if ($Name[0] -eq $switchedKey) {
                 $keepOpened=$true
             } else {
-                Invoke-SelectedCommand -selectedCommand $Name[1] -project $project -projectPath $projectPath -commands $commands
+                Invoke-SelectedCommand -selectedCommand $Name[1] -project $project -projectPath $projectPath -commands $commands -Terminal $Terminal
         
             }
         }

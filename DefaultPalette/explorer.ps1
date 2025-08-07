@@ -1,4 +1,6 @@
-function Invoke-Command {
-    param($project, $projectPath, $NewTerminalCmd)
-    explorer .
-}
+<#
+.NOTES
+Spawn = false
+#>
+param($project, $projectPath, $NewTerminalCmd)
+explorer .

@@ -1,4 +1,2 @@
-function Invoke-Command {
-    param($project, $projectPath, $NewTerminalCmd)
-    code .
-}
+param($project, $projectPath, $NewTerminalCmd)
+code .
