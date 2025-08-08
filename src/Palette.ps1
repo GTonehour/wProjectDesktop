@@ -101,14 +101,18 @@ function Invoke-SelectedCommand {
 
             # 2. Check the metadata to decide how to run the script
             if ($metadata.RequiresNewTerminal -eq 'true') {
-                # Run in a new Windows Terminal tab
-                $title = if ($metadata.Title) { $metadata.Title } else { "$selectedCmd.Name - $project" }
+                Write-Host $selectedCmd.Name
+                $title = if ($metadata.Title) { $metadata.Title } else { "$(selectedCmd.Name) - $project" }
                 $command = "powershell.exe -NoProfile -File `"$($selectedCmd.ScriptPath)`" -project `"$project`" -projectPath `"$projectPath`""
-                wt -p "PowerShell" -d "$projectPath" --title "$title" -- $command
+                $terminalCmd = New-TerminalCmd -Command $command -Title $title
+                Write-Host $terminalCmd
+                Read-Host
+                return Invoke-Expression $terminalCmd
             } else {
                 # Run in the current console
                 # The script will inherit the variables from this scope
-                . $selectedCmd.ScriptPath -project $project -projectPath $projectPath
+                $result = . $selectedCmd.ScriptPath -project $project -projectPath $projectPath
+                return $result
             }
             # The return statement is no longer needed here
         } catch {
