@@ -1,2 +1,6 @@
-param($project, $projectPath, $NewTerminalCmd)
+<#
+.NOTES
+Spawn = false
+#>
+param($project, $projectPath)
 code .

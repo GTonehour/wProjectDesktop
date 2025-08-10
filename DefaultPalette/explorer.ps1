@@ -2,5 +2,5 @@
 .NOTES
 Spawn = false
 #>
-param($project, $projectPath, $NewTerminalCmd)
+param($project, $projectPath)
 explorer .

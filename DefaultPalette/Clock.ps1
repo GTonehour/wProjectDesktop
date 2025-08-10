@@ -2,7 +2,9 @@
 .NOTES
 Spawn = false
 #>
-param($project, $projectPath, $NewTerminalCmd)
-$clockScript = "$PSScriptRoot\Resources\clock-script.ps1"
-$terminalCommand = & $NewTerminalCmd "powershell -File `"$clockScript`"" "Clock $project"
-Invoke-Expression $terminalCommand
+param($project, $projectPath)
+while ($true) {
+    Clear-Host
+    Write-Host (Get-Date -Format 'HH:mm:ss')
+    Start-Sleep 1
+}

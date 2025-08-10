@@ -1,2 +1,2 @@
-param($project, $projectPath, $NewTerminalCmd)
+param($project, $projectPath)
 yazi .

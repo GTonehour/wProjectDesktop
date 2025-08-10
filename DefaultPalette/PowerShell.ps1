@@ -1,1 +1,1 @@
-param($project, $projectPath, $NewTerminalCmd)
+param($project, $projectPath)

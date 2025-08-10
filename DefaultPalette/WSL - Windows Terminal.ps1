@@ -1,2 +1,2 @@
-param($project, $projectPath, $NewTerminalCmd)
+param($project, $projectPath)
 Invoke-Expression "wt -d $projectPath -p Ubuntu --title `"WSL $project`""

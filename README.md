@@ -8,7 +8,7 @@ Work, personal stuff, side-husle, dotfiles, notes... multitasking is fun and gam
 
 wProjectDesktop is a light and open-source solution that displays each project in its own (Windows Native) Virtual Desktop, and provides a project-aware command palette.
 
-[VIDEO]
+[VIDEO coming soon]
 
 ## Installation
 ### Binary release
@@ -48,6 +48,7 @@ WM (GlazeWM, Komorebi, workspacer...) often implement "workspaces", which are so
 They're generally not compatible in any way with Windows Virtual Desktop:
 - Komorebi explicitely doesn't try to support compatibility with Windows VD: https://github.com/LGUG2Z/komorebi/issues/15#issuecomment-901605163
 - GlazeWM makes Tasks View unusable: https://github.com/glzr-io/glazewm/issues/1142
+- [Whim](https://github.com/dalyIsaac/Whim) [doesn't persist layout on switching virtual desktop](https://github.com/dalyIsaac/Whim/issues/1156)
 
 This have advantages:
 - The WM developers are free to add all the features they want, not limited by the [lack of a proper API for Windows Virtual Desktop](https://devblogs.microsoft.com/oldnewthing/20201123-00/?p=104476).
@@ -60,11 +61,10 @@ But also drawbacks:
 - Limited adoption means limited compatibility with other apps
 
 Some WM **are** compatible with native Virtual Desktops (hence with wProjectDesktop):
-- Workspacer: https://github.com/workspacer/workspacer/issues/277 (used by wProjectDesktop's author)
-- FancyWM, according to [this comment](https://github.com/glzr-io/glazewm/issues/169#issue-1446572438)
+- [FancyWM](https://github.com/FancyWM/fancywm)
+- [Workspacer](https://workspacer.org/): https://github.com/workspacer/workspacer/issues/277
 - Jwno?
 - LightWM?
-- Whim?
 
 ## Features
 - Alt+Tab focuses Windows related only to your current project.
@@ -74,19 +74,46 @@ Some WM **are** compatible with native Virtual Desktops (hence with wProjectDesk
 ## Configuration
 Configuration folder will be in `%LocalAppData%\wProjectDesktop\config` by default. You can replace it by a custom one using the `-customConfig` parameter during installation (e.g., `.\Install.ps1 -customConfig "C:\MyCustomConfig"`), or by setting the `wPD_Config_Path` environment variable.
 
-## Projects
+Config/
+├─ [projects.json](#Projects)
+├─ settings.json
+├─ [Palette/](#Command%20palette)
+
+### Projects
 project.json
-## Commands
-"Palette" folder
-## Hotkey
+### Command palette
+In addition to the default commands, you can add scripts to the `Palette` configuration's subfolder. See [Adding commands to the palette](#Adding commands to the palette) for supported scripts.
+
+### Hotkey
 Coming soon.
-## Apps
+### Apps
 Coming soon.
 
 ## Comparisons
 Coming soon
 ### FlowLauncher
 ### rofi (Linux)
+
+## Adding commands to the palette
+### PowerShell (.ps1)
+An optional "Spawn = false" setting can be set in [comment-based help](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_comment_based_help?view=powershell-7.5)'s "NOTES", to run the command in the main wProjectDesktop terminal instance.
+#### Examples
+- Open Windows explorer in the current project
+~~~powershell
+<#
+.NOTES
+Spawn = false
+#>
+param($project, $projectPath)
+explorer .
+~~~
+- Open VS Code in the current project
+~~~powershell
+param($project, $projectPath)
+code .
+~~~
+### Bash (.sh)
+Will run in a new terminal instance.
 
 ## Small footprint
 - Can be installed and used without admin rights
