@@ -1,4 +1,4 @@
-echo "Initializing wProjectDesktop..."
+Write-Host "Starting palette..."
 
 . $PSScriptRoot\Show-Term.ps1
 

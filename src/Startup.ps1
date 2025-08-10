@@ -13,7 +13,7 @@ if ($termAlreadyStarted) {
 . .\src\Show-Term.ps1
 $configuredProjects = $ProjectConfigs.Keys
 
-Write-Host "Running Desktop-Switcher..." # Logging that step because this dependency sometimes runs indefinitely.
+Write-Host "Initializing wProjectDesktop..." # Logging that step because this dependency sometimes runs indefinitely.
 $LastDesktop = Get-CurrentDesktop
 Get-DesktopList | Where-Object { $configuredProjects -contains $_.Name } | ForEach-Object {
 	Switch-Desktop -Desktop $_.Name
