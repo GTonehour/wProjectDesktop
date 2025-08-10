@@ -39,4 +39,34 @@ Describe 'Palette' {
         
         Test-Path (Join-Path $env:Temp "pester-$nonce.txt") | Should -Be $true
      }
+
+    It 'doesnt get spaces mangled through the parsing of wt plus <Terminal>' -ForEach $terminals {
+        $nonce = $(New-Guid)
+        $tempRunnerScript = Join-Path $env:TEMP "pester-runner.ps1"
+        # Resolve the absolute path to the project root for the external script
+        $projectRootPath = Join-Path $PSScriptRoot ..
+
+        # This is the content of the script that 'wt' will execute.
+        # It needs absolute paths because its execution location is different.
+        # Note the backticks (`) before `$commands` and `$true` to ensure they are
+        # treated as literal text in the script file, not expanded immediately.
+        $scriptContent = @"
+. '$projectRootPath\src\Palette.ps1'
+. '$projectRootPath\src\ProjectUtils.ps1'
+
+`$commands = Get-PaletteCommands -wPdDir '$projectRootPath' -loadTestsPalette `$true
+Invoke-SelectedCommand -selectedCommand 'spawning write with spaces' -commands `$commands -project '$nonce' -projectPath "." -Terminal $Terminal
+"@
+        # Create the temporary runner script
+        $scriptContent | Out-File -FilePath $tempRunnerScript -Encoding UTF8
+        
+        # The command to execute our runner script in a new, non-focused wt process
+        $wtCommand = "wt powershell -File $tempRunnerScript"
+        Invoke-Expression $wtCommand
+
+        Start-Sleep -Seconds 3
+
+        # Assert that the final output file was created by the nested process
+        Test-Path (Join-Path $env:Temp "pester-$nonce.txt") | Should -Be $true
+    }
 }

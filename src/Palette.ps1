@@ -29,16 +29,6 @@ function New-TerminalCmd {
        [string]$projectPath,
        [string]$Terminal
    )
-   if ($Terminal -eq "wt") {
-    $executableCommand = "wt -d `"$projectPath`" --title `"$Title`" -- $Command"
-    # Start-Process -FilePath wt -ArgumentList @("--title", "a", "powershell.exe -NoProfile -File `"C:\Users\mmi2\projects\wProjectDesktop\DefaultPalette\Claude Code.ps1`"")
-   } else {
-    $executableCommand = "alacritty --working-directory `"$projectPath`" --title `"$Title`" -e `"$($Command -replace '`"', '``"')`""
-    # alacritty --working-directory "C:\Users\mmi2\projects\wProjectDesktop" --title "Claude Code - wProjectDesktop" -e "powershell.exe -NoProfile -File `"C:\Users\mmi2\projects\wProjectDesktop\DefaultPalette\Claude Code.ps1`""
-   }
-# Write-Host $executableCommand
-# Warning, visitor: trying to replace by "Start-Process" will be a hell you won't be able to /escape.
-Invoke-Expression -Command $executableCommand
 }
 
 function Get-ScriptsFromDirectory {
@@ -110,8 +100,19 @@ function Invoke-SelectedCommand {
                 return $result
             } else {
                 $title = if ($metadata.Title) { $metadata.Title } else { "$($selectedCmd.Name) - $project" }
-                $innerCommand = "powershell.exe -NoProfile -File `"$($selectedCmd.ScriptPath)`" -project `"$project`" -projectPath `"$projectPath`""
-                return New-TerminalCmd -Command $innerCommand -Title $title -projectPath $projectPath -Terminal $Terminal
+                $scriptToRun = "& `"$($selectedCmd.ScriptPath)`" -projectPath $projectPath -project $project"
+                $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($scriptToRun))
+                $innerCommand = "powershell.exe -NoProfile -EncodedCommand $encodedCommand"
+               if ($Terminal -eq "wt") {
+                $executableCommand = "wt -d `"$projectPath`" --title `"$Title`" -- $innerCommand"
+                # Start-Process -FilePath wt -ArgumentList @("--title", "a", "powershell.exe -NoProfile -File `"C:\Users\mmi2\projects\wProjectDesktop\DefaultPalette\Claude Code.ps1`"")
+               } else {
+                $executableCommand = "alacritty --working-directory `"$projectPath`" --title `"$Title`" -e $innerCommand"
+                # alacritty --working-directory "C:\Users\mmi2\projects\wProjectDesktop" --title "Claude Code - wProjectDesktop" -e "powershell.exe -NoProfile -File `"C:\Users\mmi2\projects\wProjectDesktop\DefaultPalette\Claude Code.ps1`""
+               }
+                # Write-Host $executableCommand
+                # Warning, visitor: trying to replace by "Start-Process" will be a hell you won't be able to /escape.
+                return Invoke-Expression -Command $executableCommand
             }
         } catch {
             Write-Host "Command failed: $($_.Exception.Message)" -ForegroundColor Red
