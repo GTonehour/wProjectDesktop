@@ -1,0 +1,2 @@
+param($project, $projectPath)
+scooter
