@@ -2,7 +2,10 @@
 setlocal enabledelayedexpansion
 
 REM Get current desktop number
-call "%~dp0get_current_desktop.bat"
+call "%~dp0virtualdesktop_exe.bat"
+
+REM Get current desktop output
+for /f "tokens=*" %%i in ('"%exe_path%" /GetCurrentDesktop 2^>nul') do set "desktop_output=%%i"
 
 REM Extract desktop name from single quotes using string manipulation
 set "desktop_line=%desktop_output%"
