@@ -21,16 +21,6 @@ function Get-MRUTimestamp {
     return $null
 }
 
-function New-TerminalCmd {
-   param(
-       [string]$Command,
-       [string]$Title,
-       [string]$project,
-       [string]$projectPath,
-       [string]$Terminal
-   )
-}
-
 function Get-ScriptsFromDirectory {
     param([string]$Path,
         [hashtable]$Collection # Passed by reference so the function can modify it.
@@ -147,7 +137,7 @@ function Show-Palette {
             Hide-Term
         }
         $keepOpened=$false
-        # Clear-Host # Sinon on verra tous les "Executing" (et "Command failed") précédents le temps que la commande s'exécute. Pas juste avant le "executing" parce qu'on veut aussi effacer les "Not a project". Pas réussi à mock.
+        Clear-Host # Sinon on verra tous les "Executing" (et "Command failed") précédents le temps que la commande s'exécute. Pas juste avant le "executing" parce qu'on veut aussi effacer les "Not a project". Pas réussi à mock.
         $project = Get-CurrentDesktop | Get-DesktopName # 27mai25: "FromDesktop" failed with "Object reference not set to an instance of an object." 1.5.10\VirtualDesktop.ps1:1687 char:42. A relaunch of startupDocs.ps1 fixed it.
         $projectList = Get-ProjectList
         $projectObj = $projectList | Where-Object { $_.Name -eq $project }
