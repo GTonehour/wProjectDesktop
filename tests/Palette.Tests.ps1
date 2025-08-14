@@ -33,7 +33,9 @@ Describe 'Palette' {
         $nonce = $(New-Guid)
         
         $commands = Get-PaletteCommands -wPdDir (Join-Path $PSScriptRoot ..) -loadTestsPalette $true
+        Write-Host 1
         Invoke-SelectedCommand -selectedCommand 'spawning write with spaces' -commands $commands -project $nonce -projectPath "." -Terminal alacritty
+        Write-Host 2
         
         Start-Sleep -Seconds 3
         
@@ -64,7 +66,7 @@ Invoke-SelectedCommand -selectedCommand 'spawning write with spaces' -commands `
         $wtCommand = "wt powershell -File $tempRunnerScript"
         Invoke-Expression $wtCommand
 
-        Start-Sleep -Seconds 3
+        Start-Sleep -Seconds 5 # 3 was enough on some devices, but not on others. 6 is enough.
 
         # Assert that the final output file was created by the nested process
         Test-Path (Join-Path $env:Temp "pester-$nonce.txt") | Should -Be $true
