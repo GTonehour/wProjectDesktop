@@ -36,34 +36,34 @@ PlaySound(Sound) {
 
 F1::{
 	if WinExist(TERM){
-	; See Discussions.txt
-exitCode := RunWait('desktop_matches_state.bat', , "Hide")
+    	; See Discussions.txt
+        exitCode := RunWait('desktop_matches_state.bat', , "Hide")
 
-switch exitCode {
-    case 0:
-        ; Desktop matches project
-		PlaySound(Ring)
-		FocusTerm()
-    case 1:
-        ; Desktop was changed out of wPD
-		FocusTerm()
-		Send('{F12}')
-		PlaySound(Ring)
-    case 2:
-		; The state file doesn't exist. Meaning it's probably the first execution.
-		PlaySound(Ring)
-		FocusTerm()
-    default:
-        MsgBox("Unexpected error: " . exitCode)
-}
-} else { ; If the user alt+F4d it for some reason
-    executableFile := EnvGet("LocalAppData") . '\wProjectDesktop\startup_executable.txt'
-    if FileExist(executableFile) {
-        executablePath := FileRead(executableFile, "UTF-8")
-        RunWait 'powershell.exe -ExecutionPolicy Bypass -File "' . executablePath . '"'
-    } else {
-        MsgBox("wProjectDesktop not installed.") ; Typiquement si on n'avait lancé qu'en DevMode.
+        switch exitCode {
+            case 0:
+                ; Desktop matches project
+        		PlaySound(Ring)
+        		FocusTerm()
+            case 1:
+                ; Desktop was changed out of wPD
+        		FocusTerm()
+        		Send('{F12}')
+        		PlaySound(Ring)
+            case 2:
+        		; The state file doesn't exist. Meaning it's probably the first execution.
+        		PlaySound(Ring)
+        		FocusTerm()
+            default:
+                MsgBox("Unexpected error: " . exitCode)
+        }
+    } else { ; If the user alt+F4d it for some reason
+        executableFile := EnvGet("LocalAppData") . '\wProjectDesktop\startup_executable.txt'
+        if FileExist(executableFile) {
+            executablePath := FileRead(executableFile, "UTF-8")
+            RunWait 'powershell.exe -ExecutionPolicy Bypass -File "' . executablePath . '"'
+        } else {
+            MsgBox("wProjectDesktop not installed.") ; Typiquement si on n'avait lancé qu'en DevMode.
+        }
     }
-}
 }
 

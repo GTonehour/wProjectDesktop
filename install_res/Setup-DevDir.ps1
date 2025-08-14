@@ -1,8 +1,8 @@
 $stateFolder = Join-Path $PSScriptRoot .. | Join-Path -ChildPath State
 if (-not (Test-Path $stateFolder)) {
-   New-Item -Path $stateFolder -ItemType Directory -Force -Verbose:$false
-   New-Item -Path $stateFolder\MRU -ItemType Directory -Force -Verbose:$false
-	Out-File -FilePath "$stateFolder\CurrentProject.txt"
+   New-Item -Path "$stateFolder" -ItemType Directory -Force -Verbose:$false
+   New-Item -Path "$stateFolder\MRU" -ItemType Directory -Force -Verbose:$false
+	Out-File -FilePath "$stateFolder\currentProject.txt"
 }
 
 # To prevent installing from being a prerequisite to testing.
