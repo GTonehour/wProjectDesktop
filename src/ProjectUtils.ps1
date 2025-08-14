@@ -20,9 +20,9 @@ function Get-Settings {
 }
 
 function Get-ProjectList {
-$configDir = Get-ConfigPath
-$configPath = "$configDir\projects.json"
-$config = Get-Content $configPath | ConvertFrom-Json
+    $configDir = Get-ConfigPath
+    $configPath = "$configDir\projects.json"
+    $config = Get-Content $configPath | ConvertFrom-Json
 
     $projectList = @()
     foreach ($item in $config) {
