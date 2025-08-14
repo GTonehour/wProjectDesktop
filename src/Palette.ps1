@@ -95,13 +95,11 @@ function Invoke-SelectedCommand {
                 $innerCommand = "powershell.exe -NoProfile -EncodedCommand $encodedCommand"
                if ($Terminal -eq "wt") {
                 $executableCommand = "wt -d `"$projectPath`" --title `"$Title`" -- $innerCommand"
-                # Start-Process -FilePath wt -ArgumentList @("--title", "a", "powershell.exe -NoProfile -File `"C:\Users\mmi2\projects\wProjectDesktop\DefaultPalette\Claude Code.ps1`"")
                } else {
-                $executableCommand = "alacritty --working-directory `"$projectPath`" --title `"$Title`" -e $innerCommand"
-                # alacritty --working-directory "C:\Users\mmi2\projects\wProjectDesktop" --title "Claude Code - wProjectDesktop" -e "powershell.exe -NoProfile -File `"C:\Users\mmi2\projects\wProjectDesktop\DefaultPalette\Claude Code.ps1`""
+                $wrapToDetach = "cmd.exe /c start" # If we close the wPD instance (typically by mistake), we don't want all the spawned alacritty instances to close too.
+                $executableCommand = "$wrapToDetach alacritty --working-directory `"$projectPath`" --title `"$Title`" -e $innerCommand"
                }
-                # Write-Host $executableCommand
-                # Warning, visitor: trying to replace by "Start-Process" will be a hell you won't be able to /escape.
+                # Warning, visitor: trying to replace by "Start-Process" will be a hell you won't /escape.
                 return Invoke-Expression -Command $executableCommand
             }
         } catch {
