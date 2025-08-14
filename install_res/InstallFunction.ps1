@@ -78,7 +78,7 @@ if (-not $DryRun) {
     Copy-Item -Path "Uninstall.ps1" -Destination $InstallDir -Force # On ne le mets pas dans src, pour qu'il soit visible de quelqu'un qui le chercherait dans le dossier cloné ; mais on le copie quand même, pour qu'il puisse être trouvé là-bas.
     New-Item -ItemType "Directory" "$InstallDir\State" | Out-Null
     New-Item -ItemType "Directory" "$InstallDir\State\MRU" | Out-Null
-	Out-File -FilePath "$InstallDir\State\CurrentProject.txt"
+	Out-File -FilePath "$InstallDir\State\currentProject.txt"
 }
     Write-Host "Successfully copied all project files" -ForegroundColor Green
 

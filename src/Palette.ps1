@@ -175,7 +175,7 @@ function Show-Palette {
         # 1. Pas trop avant le fzf sinon si on était sur A puis qu'on va sur B jusqu'au changement d'état et qu'on va sur C (pouvant être A) avant le fzf, "Esc" pourrait envoyé dans le vide et donc rester incohérent.
         # 2. Pas trop après sinon si on était sur A puis qu'on va jusqu'au fzf sur B et qu'on revient sur A avant que l'état soit sur B, l'état restera incohérent.
         # Dans les deux cas on peut rester dans un état incohérent. Certes le scénario le moins probable est le 2 (car suppose A->B->A plutôt que A->B->CdontA), MAIS on préfère avoir un state pour le tout premier après Startup.
-        Set-Content -Path $wProjectDesktop\State\CurrentProject.txt -Value $project -NoNewline
+        Set-Content -Path "$wProjectDesktop\State\currentProject.txt" -Value $project -NoNewline -Encoding Default
 
         $Name = $cmds | ForEach-Object {$_.Name} | fzf.exe --prompt "$projectToDisplay > " --cycle --expect=$switchedKey # Pas `--bind one:accept`. Sinon par exemple pour aller à "lazygit" je tapais "laz" qui ouvrait lazygit, puis "ygit"... qui l'ouvrait à nouveau.
 
