@@ -1,2 +1,7 @@
 param($project, $projectPath)
-& "C:\Program Files\PowerShell\7\pwsh.exe"
+
+. "$PSScriptRoot\..\src\ProjectUtils.ps1"
+$settings = Get-Settings
+$powershellExecutable = if ($settings -and $settings.powershellExecutable) { $settings.powershellExecutable } else { "powershell" }
+
+& $powershellExecutable

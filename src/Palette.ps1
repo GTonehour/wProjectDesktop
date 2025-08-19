@@ -94,7 +94,7 @@ function Invoke-SelectedCommand {
                 return $result
             } else {
                 $title = if ($metadata.Title) { $metadata.Title } else { "$($selectedCmd.Name) - $project" }
-                $scriptToRun = "& `"$($selectedCmd.ScriptPath)`" -projectPath $projectPath -project $project"
+                $scriptToRun = "& `"$($selectedCmd.ScriptPath)`" -projectPath `"$projectPath`" -project $project"
                 $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($scriptToRun))
                 $powershellExecutable = if ($settings -and $settings.powershellExecutable) { $settings.powershellExecutable } else { "powershell" }
                 $innerCommand = "$powershellExecutable -NoProfile -EncodedCommand $encodedCommand"
@@ -104,7 +104,7 @@ function Invoke-SelectedCommand {
                 $wrapToDetach = "cmd.exe /c start" # If we close the wPD instance (typically by mistake), we don't want all the spawned alacritty instances to close too.
                 $executableCommand = "$wrapToDetach alacritty --working-directory `"$projectPath`" --title `"$Title`" -e $innerCommand"
                }
-                # Warning, visitor: trying to replace by "Start-Process" will be a hell you won't /escape.
+                # Warning, visitor: trying to replace by "Start-Process" will be a hell you won't `escape.
                 return Invoke-Expression -Command $executableCommand
             }
         } catch {
