@@ -71,8 +71,12 @@ function Invoke-SelectedCommand {
 		# wt -p "Git Bash" -d "$projectPath" -- bash $wslpath
     } elseif ($selectedCmd.Type -eq "PowerShell") {
         try {
-            # 1. Get the script's help content and metadata
-            $help = Get-Help $selectedCmd.ScriptPath -Full # NOTES prints only with the "Full" flag
+            try { # Tried to check if script encoding is understood by user's powershell without waiting for that long and ugly Get-Help to fail... but didn't succeed.
+                $help = Get-Help $selectedCmd.ScriptPath -Full # NOTES prints only with the "Full" flag
+            } catch {
+                Write-Host "The version of your `"PowerShell`" fails to parse $($selectedCmd.ScriptPath). This can happen when it contains characters (emojis) unsupported by your PS encoding." -ForegroundColor Red
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
             $metadata = @{}
             # Parse the .NOTES section into a hashtable
             $help.alertSet.alert.Text -split "`r`n|`r|`n" | ForEach-Object {
