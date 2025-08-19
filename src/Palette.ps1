@@ -96,7 +96,8 @@ function Invoke-SelectedCommand {
                 $title = if ($metadata.Title) { $metadata.Title } else { "$($selectedCmd.Name) - $project" }
                 $scriptToRun = "& `"$($selectedCmd.ScriptPath)`" -projectPath $projectPath -project $project"
                 $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($scriptToRun))
-                $innerCommand = "powershell.exe -NoProfile -EncodedCommand $encodedCommand"
+                $powershellExecutable = if ($settings -and $settings.powershellExecutable) { $settings.powershellExecutable } else { "powershell" }
+                $innerCommand = "$powershellExecutable -NoProfile -EncodedCommand $encodedCommand"
                if ($Terminal -eq "wt") {
                 $executableCommand = "wt -d `"$projectPath`" --title `"$Title`" -- $innerCommand"
                } else {
@@ -117,16 +118,12 @@ $switchedKey = 'f12'
 
 function Get-PaletteCommands {
    param (
-        [string]$wPdDir,
-        [bool]$loadTestsPalette
+        [string]$wPdDir
     )
     $configPalettePath = Join-Path (Get-ConfigPath) "Palette"
     $commands = @{}
     Get-ScriptsFromDirectory -Path (Join-Path $wPdDir "DefaultPalette") -Collection $commands
     Get-ScriptsFromDirectory -Path $configPalettePath -Collection $commands
-    if($loadTestsPalette){
-        Get-ScriptsFromDirectory -Path (Join-Path $wPdDir "testsPalette") -Collection $commands
-    }
     return $commands
 }
 
