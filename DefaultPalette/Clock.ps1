@@ -1,7 +1,3 @@
-<#
-.NOTES
-Spawn = false
-#>
 param($project, $projectPath)
 while ($true) {
     Clear-Host
