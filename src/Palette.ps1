@@ -144,7 +144,6 @@ function Show-Palette {
             Set-Location $projectPath -ErrorVariable notAProject -ErrorAction SilentlyContinue
             if ($notAProject) {
                 $projectPath = $env:USERPROFILE
-                Set-Location $projectPath
                 $projectToDisplay = "$project (invalid project path)"
             } else {
                 $projectToDisplay = $project
