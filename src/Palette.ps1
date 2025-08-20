@@ -98,14 +98,26 @@ function Invoke-SelectedCommand {
                 $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($scriptToRun))
                 $powershellExecutable = if ($settings -and $settings.powershellExecutable) { $settings.powershellExecutable } else { "powershell" }
                 $innerCommand = "$powershellExecutable -NoProfile -EncodedCommand $encodedCommand"
-               if ($Terminal -eq "wt") {
-                $executableCommand = "wt -d `"$projectPath`" --title `"$Title`" -- $innerCommand"
-               } else {
-                $wrapToDetach = "cmd.exe /c start" # If we close the wPD instance (typically by mistake), we don't want all the spawned alacritty instances to close too.
-                $executableCommand = "$wrapToDetach alacritty --working-directory `"$projectPath`" --title `"$Title`" -e $innerCommand"
-               }
-                # Warning, visitor: trying to replace by "Start-Process" will be a hell you won't `escape.
-                return Invoke-Expression -Command $executableCommand
+                if ($Terminal -eq "wt") {
+                    Start-Process wt -ArgumentList @(
+                        "-d `"$projectPath`"",
+                        "--title `"$Title`"",
+                        "--",
+                        $innerCommand
+                    )
+                } else {
+                    Start-Process cmd.exe -ArgumentList @( # If we close the wPD instance (typically by mistake), we don't want all the spawned alacritty instances to close too.
+                        "/c",
+                        "start",
+                        "alacritty",
+                        "--working-directory",
+                        "`"$projectPath`"",
+                        "--title",
+                        "`"$Title`"",
+                        "-e",
+                        $innerCommand
+                    )
+                }
             }
         } catch {
             Write-Host "Command failed: $($_.Exception.Message)" -ForegroundColor Red
