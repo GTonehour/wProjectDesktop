@@ -22,7 +22,20 @@ function Get-Settings {
 function Get-ProjectList {
     $configDir = Get-ConfigPath
     $configPath = "$configDir\projects.json"
-    $config = Get-Content $configPath | ConvertFrom-Json
+
+    if (-not (Test-Path $configPath)) {
+        Write-Host "$configPath not found." -ForegroundColor Red
+        Read-Host
+        return
+    }
+
+    try {
+        $config = Get-Content $configPath | ConvertFrom-Json -ErrorAction Stop
+    } catch {
+        Write-Host "$configPath isn't valid JSON" -ForegroundColor Red
+        Read-Host
+        return
+    }
 
     $projectList = @()
     foreach ($item in $config) {
