@@ -11,10 +11,24 @@ Describe 'Palette' {
         @{ Terminal = "wt" }
         @{ Terminal = "alacritty" }
     )
-    BeforeEach {
-        function fzf.exe { # Plante avec Mock, peut-être parce que pas un cmdlet.
-            return 'simple_print.ps1'
+    $nonceCommands = @(
+        @{ Command = "spawning write with spaces" }
+        @{ Command = "nospawn" }
+        @{ Command = "elevated" }
+        @{ Command = "nospawn elevated" }
+    )
+    $testCases = foreach ($terminal in $terminals) {
+        foreach ($command in $nonceCommands) {
+            @{
+                Terminal = $terminal.Terminal
+                Command = $command.Command
+            }
         }
+    }
+    BeforeEach {
+        # function fzf.exe { # Plante avec Mock, peut-être parce que pas un cmdlet.
+        #     return 'simple_print.ps1'
+        # }
         Mock Hide-Term { }
 		Mock Get-ConfigPath { return Join-Path $wPdDir fixtures testsConfig }
 		Mock cls { }
@@ -31,26 +45,34 @@ Describe 'Palette' {
         $result | Should -Be 'PALETTE_TEST_SUCCESS'
     }
     
-    It 'script containing space in name spawns <Terminal> and executes' -ForEach $terminals {
+    It '<Command> with <Terminal>' -ForEach $testCases {
         $nonce = $(New-Guid)
-        Invoke-SelectedCommand -selectedCommand 'spawning write with spaces' -commands $commands -project $nonce -projectPath (Join-Path $wPdDir fixtures "path with spaces") -Terminal $Terminal
-        Start-Sleep -Seconds 3
+        Invoke-SelectedCommand -selectedCommand $Command -commands $commands -project $nonce -projectPath (Join-Path $wPdDir fixtures "path with spaces") -Terminal $Terminal
+        Start-Sleep -Seconds 6 # 3 insuffisant
         Test-Path (Join-Path $env:Temp "pester-$nonce.txt") | Should -Be $true
      }
 
-    It 'doesnt get spaces mangled through the parsing of wt plus <Terminal>' -ForEach $terminals {
+    It 'spawns wt which runs <Command> with <Terminal>' -ForEach $testCases {
         $nonce = $(New-Guid)
         $tempRunnerScript = Join-Path $env:TEMP "pester-runner.ps1"
 
         # To "inherit" the Get-Config mocking in $tempRunnerScript
-        $commandsJson = $commandsJson = [System.Management.Automation.PSSerializer]::Serialize($commands)
-        
+        $commandsJson = [System.Management.Automation.PSSerializer]::Serialize($commands)
+#         $commands.GetEnumerator() | ForEach-Object {
+#     Write-Host "$($_.Key): $($_.Value)"
+# }
         $scriptContent = @"
 # Here in addition to "Before", because this one will execute in our spawned terminal
 . '$wPdDir\src\Palette.ps1'
 . '$wPdDir\src\ProjectUtils.ps1'
 `$commands = [System.Management.Automation.PSSerializer]::Deserialize('$commandsJson')
-Invoke-SelectedCommand -selectedCommand 'spawning write with spaces' -commands `$commands -project '$nonce' -projectPath "." -Terminal $Terminal
+# Write-Host $Command
+# Write-Host `$commands.Count
+# `$commands.GetEnumerator() | ForEach-Object {
+#     Write-Host "`$(`$_.Key): `$(`$_.Value)"
+# }
+Invoke-SelectedCommand -selectedCommand "$Command" -commands `$commands -project '$nonce' -projectPath "." -Terminal $Terminal
+# Read-Host
 "@
         # Create the temporary runner script
         $scriptContent | Out-File -FilePath $tempRunnerScript -Encoding UTF8
@@ -58,7 +80,7 @@ Invoke-SelectedCommand -selectedCommand 'spawning write with spaces' -commands `
         # The command to execute our runner script in a new, non-focused wt process
         Start-WindowsTerminal -ScriptPath $tempRunnerScript -WithPositioning $false
 
-        Start-Sleep -Seconds 7 # 5 wasn't enough on some devices.
+        Start-Sleep -Seconds 10 # 7 wasn't enough on some devices.
 
         # Assert that the final output file was created by the nested process
         Test-Path (Join-Path $env:Temp "pester-$nonce.txt") | Should -Be $true

@@ -98,25 +98,52 @@ function Invoke-SelectedCommand {
                 $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($scriptToRun))
                 $powershellExecutable = if ($settings -and $settings.powershellExecutable) { $settings.powershellExecutable } else { "powershell" }
                 $innerCommand = "$powershellExecutable -NoProfile -EncodedCommand $encodedCommand"
+                
+                # Check if Admin = true is specified in the metadata
+                $runAsAdmin = ($metadata.Elevated -eq 'true')
+                
                 if ($Terminal -eq "wt") {
-                    Start-Process wt -ArgumentList @(
-                        "-d `"$projectPath`"",
-                        "--title `"$Title`"",
-                        "--",
-                        $innerCommand
-                    )
+                    if ($runAsAdmin) {
+                        Start-Process wt -Verb RunAs -ArgumentList @(
+                            "-d `"$projectPath`"",
+                            "--title `"$Title`"",
+                            "--",
+                            $innerCommand
+                        )
+                    } else {
+                        Start-Process wt -ArgumentList @(
+                            "-d `"$projectPath`"",
+                            "--title `"$Title`"",
+                            "--",
+                            $innerCommand
+                        )
+                    }
                 } else {
-                    Start-Process cmd.exe -ArgumentList @( # If we close the wPD instance (typically by mistake), we don't want all the spawned alacritty instances to close too.
-                        "/c",
-                        "start",
-                        "alacritty",
-                        "--working-directory",
-                        "`"$projectPath`"",
-                        "--title",
-                        "`"$Title`"",
-                        "-e",
-                        $innerCommand
-                    )
+                    if ($runAsAdmin) {
+                        Start-Process cmd.exe -Verb RunAs -ArgumentList @(
+                            "/c",
+                            "start",
+                            "alacritty",
+                            "--working-directory",
+                            "`"$projectPath`"",
+                            "--title",
+                            "`"$Title`"",
+                            "-e",
+                            $innerCommand
+                        )
+                    } else {
+                        Start-Process cmd.exe -ArgumentList @( # If we close the wPD instance (typically by mistake), we don't want all the spawned alacritty instances to close too.
+                            "/c",
+                            "start",
+                            "alacritty",
+                            "--working-directory",
+                            "`"$projectPath`"",
+                            "--title",
+                            "`"$Title`"",
+                            "-e",
+                            $innerCommand
+                        )
+                    }
                 }
             }
         } catch {

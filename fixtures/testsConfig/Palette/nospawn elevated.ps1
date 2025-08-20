@@ -1,4 +1,8 @@
-# No "Spawn=false" here so Invoke-SelectedCommand spawns, by default
+<#
+.NOTES
+Spawn = false
+Elevated = true
+#>
 param(
     [string]$project,
     [string]$projectPath
@@ -9,4 +13,3 @@ Write-Host "📤" # See "simple write...": printing it in "spawning..." will tes
 $testFile = Join-Path $env:TEMP "pester-$project.txt"
 "Test executed at $(Get-Date)" | Out-File -FilePath $testFile -Encoding UTF8
 Write-Host "Test file created: $testFile"
-# Read-Host
