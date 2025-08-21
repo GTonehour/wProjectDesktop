@@ -33,11 +33,13 @@ Describe 'Palette' {
 		Mock Get-ConfigPath { return Join-Path $wPdDir fixtures testsConfig }
 		Mock cls { }
         $commands = Get-PaletteCommands -wPdDir $wPdDir # AFTER having mocked Get-ConfigPath, because we want testsConfig
+        $testDump = Join-Path $wPdDir fixtures "path with spaces" # Not in $env:TEMP because the environment in elevated commands... is the admin's, while the file's existence will be checked in the $env:TEMP of the Pester runner's user.
+        Set-Location $testDump # So that the "nospawn" commands create the file there too.
     }
 
     AfterEach {
-        # Clean up test files after each test
-        Get-ChildItem -Path $env:TEMP -Filter "pester-*.txt" | Remove-Item -Force -ErrorAction SilentlyContinue
+        Get-ChildItem -Path $testDump -Filter "pester-*.txt" | Remove-Item -Force -ErrorAction SilentlyContinue
+        Get-ChildItem -Path $env:Temp -Filter "pester-*.txt" | Remove-Item -Force -ErrorAction SilentlyContinue # For test-runner.ps1
     }    
     
     It 'executes simple script with <Terminal>' -ForEach $terminals {
@@ -47,9 +49,9 @@ Describe 'Palette' {
     
     It '<Command> with <Terminal>' -ForEach $testCases {
         $nonce = $(New-Guid)
-        Invoke-SelectedCommand -selectedCommand $Command -commands $commands -project $nonce -projectPath (Join-Path $wPdDir fixtures "path with spaces") -Terminal $Terminal
+        Invoke-SelectedCommand -selectedCommand $Command -commands $commands -project $nonce -projectPath "$testDump" -Terminal $Terminal
         Start-Sleep -Seconds 6 # 3 insuffisant
-        Test-Path (Join-Path $env:Temp "pester-$nonce.txt") | Should -Be $true
+        Test-Path (Join-Path $testDump "pester-$nonce.txt") | Should -Be $true
      }
 
     It 'spawns wt which runs <Command> with <Terminal>' -ForEach $testCases {
@@ -71,7 +73,7 @@ Describe 'Palette' {
 # `$commands.GetEnumerator() | ForEach-Object {
 #     Write-Host "`$(`$_.Key): `$(`$_.Value)"
 # }
-Invoke-SelectedCommand -selectedCommand "$Command" -commands `$commands -project '$nonce' -projectPath "." -Terminal $Terminal
+Invoke-SelectedCommand -selectedCommand "$Command" -commands `$commands -project '$nonce' -projectPath "$testDump" -Terminal $Terminal
 # Read-Host
 "@
         # Create the temporary runner script
@@ -83,6 +85,6 @@ Invoke-SelectedCommand -selectedCommand "$Command" -commands `$commands -project
         Start-Sleep -Seconds 10 # 7 wasn't enough on some devices.
 
         # Assert that the final output file was created by the nested process
-        Test-Path (Join-Path $env:Temp "pester-$nonce.txt") | Should -Be $true
+        Test-Path (Join-Path "$testDump" "pester-$nonce.txt") | Should -Be $true
     }
 }
