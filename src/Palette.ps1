@@ -130,7 +130,7 @@ function Invoke-SelectedCommand {
                             "`"$Title`"",
                             "-e",
                             $innerCommand
-                        )
+                        ) -WindowStyle Hidden
                     } else {
                         Start-Process cmd.exe -ArgumentList @( # If we close the wPD instance (typically by mistake), we don't want all the spawned alacritty instances to close too.
                             "/c",
@@ -142,7 +142,7 @@ function Invoke-SelectedCommand {
                             "`"$Title`"",
                             "-e",
                             $innerCommand
-                        )
+                        ) -WindowStyle Hidden 
                     }
                 }
             }
