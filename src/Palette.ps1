@@ -132,18 +132,22 @@ function Invoke-SelectedCommand {
                             $innerCommand
                         )
                     } else {
-                        Start-Process cmd.exe -ArgumentList @( # If we close the wPD instance (typically by mistake), we don't want all the spawned alacritty instances to close too.
-                            "/c",
-                            "start",
-                            "alacritty",
-                            "--working-directory",
-                            "`"$projectPath`"",
-                            "--title",
-                            "`"$Title`"",
-                            "-e",
-                            $innerCommand
-                        )
-                    }
+
+                      # If we close the wPD instance (typically by mistake), we don't want all the spawned alacritty instances to close too.
+                    
+$alacrittyArgs = @(
+    "--working-directory",
+    "`"$projectPath`"",
+    "--title",
+    "`"$Title`"",
+    "-e",
+    "`"$innerCommand`""
+)
+# Write-Host $alacrittyArgs
+# Read-Host
+
+# Start alacritty directly, without the cmd.exe wrapper
+Start-Process alacritty -ArgumentList $alacrittyArgs                    }
                 }
             }
         } catch {
