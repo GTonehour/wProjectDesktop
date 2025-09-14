@@ -7,13 +7,22 @@ function Get-ConfigPath {
     return Get-Content "$env:LocalAppData\wProjectDesktop\configPath.txt" -Raw | ForEach-Object { $_.Trim() }
 }
 
+function Get-Json {
+    param([string] $JsonPath)
+    try {
+        return Get-Content $JsonPath | ConvertFrom-Json -ErrorAction Stop
+    } catch {
+        Write-Host "$JsonPath isn't valid JSON" -ForegroundColor Red
+        Read-Host
+        return
+    }
+}
 function Get-Settings {
     $configDir = Get-ConfigPath
     $settingsPath = "$configDir\settings.json"
     
     if (Test-Path $settingsPath) {
-        $settings = Get-Content $settingsPath | ConvertFrom-Json
-        return $settings
+        return Get-Json $settingsPath
     }
     
     return $null
@@ -29,13 +38,7 @@ function Get-ProjectList {
         return
     }
 
-    try {
-        $config = Get-Content $configPath | ConvertFrom-Json -ErrorAction Stop
-    } catch {
-        Write-Host "$configPath isn't valid JSON" -ForegroundColor Red
-        Read-Host
-        return
-    }
+    $config = Get-Json $configPath
 
     $projectList = @()
     foreach ($item in $config) {
