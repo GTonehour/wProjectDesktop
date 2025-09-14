@@ -102,7 +102,7 @@ function Invoke-SelectedCommand {
                 # Check if Admin = true is specified in the metadata
                 $runAsAdmin = ($metadata.Elevated -eq 'true')
                 
-                if ($Terminal -eq "wt") {
+                if ($Terminal -eq "wt") { # The instance spawned with `wt -- powershell` will get the environment variables of the main instance. (even though `wt` gets the updated ones)
                     if ($runAsAdmin) {
                         Start-Process wt -Verb RunAs -ArgumentList @(
                             "-d `"$projectPath`"",
@@ -223,7 +223,6 @@ function Show-Palette {
                 $keepOpened=$true
             } else {
                 Invoke-SelectedCommand -selectedCommand $Name[1] -project $project -projectPath $projectPath -commands $commands -Terminal $Terminal
-        
             }
         }
     }
