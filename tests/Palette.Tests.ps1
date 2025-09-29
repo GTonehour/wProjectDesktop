@@ -31,7 +31,7 @@ Describe 'Palette' {
         # }
         Mock Hide-Term { }
 		Mock Get-ConfigPath { return Join-Path $wPdDir fixtures testsConfig }
-		Mock cls { }
+		Mock Clear-Host { }
         $commands = Get-PaletteCommands -wPdDir $wPdDir # AFTER having mocked Get-ConfigPath, because we want testsConfig
         $testDump = Join-Path $wPdDir fixtures "path with spaces" # Not in $env:TEMP because the environment in elevated commands... is the admin's, while the file's existence will be checked in the $env:TEMP of the Pester runner's user.
         Set-Location $testDump # So that the "nospawn" commands create the file there too.

@@ -54,6 +54,9 @@ function Get-ProjectList {
                     $projectList += [PSCustomObject]@{Name = $sub.Name; Path = $sub.FullName}
                 }
             } else {
+                Clear-Host
+                # Some paths are long to check, for instance "\\\\192.168.1.253@8080\\DavWWWRoot\\mnt\\...". Only the user will know if that's worth it, so let's let them decide.
+                Write-Host "Checking if '$expandedPath' exists..."
                 if (-not (Test-Path $expandedPath)) {
                     $name += ' (not found)'
                 }
