@@ -95,7 +95,7 @@ function Invoke-SelectedCommand {
                 return $result
             } else {
                 $title = if ($metadata.Title) { $metadata.Title } else { "$($selectedCmd.Name) - $project" }
-                $scriptToRun = "& `"$($selectedCmd.ScriptPath)`" -projectPath `"$projectPath`" -project $project"
+                $scriptToRun = "`$project=`"$project`"; `$projectPath=`"$projectPath`"; & `"$($selectedCmd.ScriptPath)`" -projectPath `"$projectPath`" -project $project"
                 $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($scriptToRun))
                 $powershellExecutable = if ($settings -and $settings.powershellExecutable) { $settings.powershellExecutable } else { "powershell" }
                 $innerCommand = "$powershellExecutable -NoProfile -EncodedCommand $encodedCommand"
