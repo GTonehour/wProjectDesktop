@@ -89,6 +89,7 @@ function Invoke-SelectedCommand {
             # Spwan true by default, because the most common, at least for defaultPalette scripts.
             if ($metadata.Spawn -eq 'false') {
                 # Run in the current console
+                Clear-Host # Clear "Google search..." before asking the user to type search terms.
                 # The script will inherit the variables from this scope
                 $result = . $selectedCmd.ScriptPath -project $project -projectPath $projectPath
                 return $result
