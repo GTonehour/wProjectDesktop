@@ -34,6 +34,7 @@ function New-Project {
 		$projectName
 	)
 
+    Clear-Host # To hide "Checking if {last path in projects.json} exists" before "Trying to start WhatsApp..."
     if ($ProjectConfigs.ContainsKey($projectName)) {
         $config = $ProjectConfigs[$projectName]
         
