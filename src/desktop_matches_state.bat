@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 REM Get current desktop number
 call "%~dp0virtualdesktop_exe.bat"
 
-for /f "tokens=2 delims='" %%a in ('"C:\Users\mmi2\projects\bin\VirtualDesktop.exe" /GetCurrentDesktop 2^>nul') do set "currentDesktopName=%%a"
+for /f "tokens=2 delims='" %%a in ('"%exe_path%" /GetCurrentDesktop 2^>nul') do set "currentDesktopName=%%a"
 
 REM Read current project from file
 if not exist "..\State\currentProject.txt" (
