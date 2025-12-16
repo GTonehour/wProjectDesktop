@@ -24,8 +24,9 @@ $ProjectConfigs = @{
             'Thunderbird'
         )
 		commands = @(
+			# 11dec25 I comment because not working in some devices
 			# Pas dans processes car winget mets dans un chemin qui change à chaque montée de version, par exemple "C:\Program Files\WindowsApps\5319275A.WhatsAppDesktop_2.2518.3.0_x64__cv1g1gvanyjgm\WhatsApp.exe". A la main depuis le site c'est encore pire, même admin n'a pas accès au dossier. Et WhatsApp ne support plus scoop. On pourrait Get-ChildItem dans C:\Program Files\WindowsApps, mais nécessite admin... Et Whatsapp n'est dans les Start Menu\Programs de AppData ni de C:\ProgramData.
-			"& `"$env:projects\wProjectDesktop\src\RunWingetApp_WhatsApp.ps1`""
+			# "& `"$env:projects\wProjectDesktop\src\RunWingetApp_WhatsApp.ps1`""
 		)
     }
 }
