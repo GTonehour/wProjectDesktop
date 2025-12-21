@@ -1,5 +1,5 @@
 $ProjectConfigs = @{
-    'work' = @{
+    't_md' = @{
         sites = @(
             'https://mail.telamon.eu/',
             'https://barttelamon.atlassian.net/jira/software/c/projects/BK/boards/10',
