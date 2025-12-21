@@ -2,7 +2,7 @@
 . $PSScriptRoot\New-Project.ps1 # Absolu
 . $PSScriptRoot\ProjectUtils.ps1
 
-$projectList = Get-ProjectList
+$projectList = Get-ProjectList | Where-Object { $_.Show }
 
 $openedDesktops = Get-DesktopList | Select-Object -ExpandProperty Name
 

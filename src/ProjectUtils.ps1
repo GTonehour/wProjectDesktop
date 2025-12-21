@@ -47,11 +47,16 @@ function Get-ProjectList {
         if (-not $name) {
             $name = Split-Path $expandedPath -Leaf
         }
+        $show = $true
+        if ($null -ne $item.show -and ($item.show -eq $false -or $item.show -eq 'false')) {
+            $show = $false
+        }
+
         if ($expandedPath){ # The path may be a environment variable, null in some environments.
             if ($item.children -eq $true) {  # Fixed condition
                 $subfolders = Get-ChildItem -Path $expandedPath -Directory
                 foreach ($sub in $subfolders) {
-                    $projectList += [PSCustomObject]@{Name = $sub.Name; Path = $sub.FullName}
+                    $projectList += [PSCustomObject]@{Name = $sub.Name; Path = $sub.FullName; Show = $show}
                 }
             } else {
                 Clear-Host
@@ -60,10 +65,10 @@ function Get-ProjectList {
                 if (-not (Test-Path $expandedPath)) {
                     $name += ' (not found)'
                 }
-                $projectList += [PSCustomObject]@{Name = $name; Path = $expandedPath}
+                $projectList += [PSCustomObject]@{Name = $name; Path = $expandedPath; Show = $show}
             }
         } else {
-            $projectList += [PSCustomObject]@{Name = "$name (not found)"}
+            $projectList += [PSCustomObject]@{Name = "$name (not found)"; Show = $show}
         }
     }
 
