@@ -66,5 +66,12 @@ function Get-ProjectList {
             $projectList += [PSCustomObject]@{Name = "$name (not found)"}
         }
     }
+
+    $projectList | Group-Object Name | ForEach-Object {
+        if ($_.Count -gt 1) {
+            throw "projects.json contains two projects named $($_.Name)."
+        }
+    }
+
     return $projectList
 }
