@@ -13,7 +13,7 @@ wProjectDesktop is a light and open-source solution that displays each project i
 ## Installation
 ### Binary release
 Coming soon.
-### Manual
+### Git
 - Install [AutoHotkey v2](www.autohotkey.com/about)
 - ~~~ps1
   git clone https://github.com/GTonehour/wProjectDesktop.git
@@ -135,7 +135,7 @@ Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser
 git clone https://github.com/GTonehour/wProjectDesktop.git
 Set-Location wProjectDesktop
 [Environment]::SetEnvironmentVariable("ahk_wPD", ..., "User") # Path to the (AutoHotkey v2)[www.autohotkey.com/about] executable (or run Install.ps1)
-[Environment]::SetEnvironmentVariable("wPD_VirtualDesktop_exe", ..., "User") # Path to (VirtualDesktop.exe)[https://github.com/MScholtes/VirtualDesktop/releases/download/V1.20/VirtualDesktop11-24H2.exe].
+[Environment]::SetEnvironmentVariable("wPD_VirtualDesktop_exe", ..., "User") # Path to (VirtualDesktop executable)[https://github.com/MScholtes/VirtualDesktop/releases].
 ~~~
 Run once:
 ~~~ps1
