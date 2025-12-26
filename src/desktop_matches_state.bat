@@ -4,7 +4,16 @@ setlocal enabledelayedexpansion
 REM Get current desktop number
 call "%~dp0virtualdesktop_exe.bat"
 
-for /f "tokens=2 delims='" %%a in ('"%exe_path%" /GetCurrentDesktop 2^>nul') do set "currentDesktopName=%%a"
+REM Run command and capture output
+"%exe_path%" /GetCurrentDesktop > "%TEMP%\wdp_out.txt" 2>&1
+
+set "currentDesktopName="
+for /f "tokens=2 delims='" %%a in ('type "%TEMP%\wdp_out.txt" ^| findstr /C:"Current desktop:"') do set "currentDesktopName=%%a"
+if exist "%TEMP%\wdp_out.txt" del "%TEMP%\wdp_out.txt"
+
+if "%currentDesktopName%"=="" (
+    exit /b 3
+)
 
 REM Read current project from file
 if not exist "..\State\currentProject.txt" (
@@ -18,3 +27,4 @@ if "%currentDesktopName%"=="%currentProject%" (
 ) else (
     exit /b 1
 )
+

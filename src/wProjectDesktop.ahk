@@ -53,7 +53,10 @@ F1::{
         		; The state file doesn't exist. Meaning it's probably the first execution.
         		PlaySound(Ring)
         		FocusTerm()
+            case 3:
+                MsgBox("VirtualDesktop error. Check if the executable is working correctly.", "Error", 16)
             default:
+
                 MsgBox("Unexpected error: " . exitCode)
         }
     } else { ; If the user alt+F4d it for some reason
