@@ -98,12 +98,16 @@ if (-not (Test-Path $ConfigPath) -and -not $DryRun -and -not $DefaultConfig) {
     New-Item -ItemType Directory -Path $ConfigPath | Out-Null
     New-Item -ItemType Directory -Path (Join-Path $ConfigPath "Palette") | Out-Null
 	$ConfigPathDoubleBackslashes = $ConfigPath.Replace('\','\\')
+	$downloads = "$UserProfile\Downloads".Replace('\','\\')
 "[{
 	`"Name`": `"wProjectDesktop install`",
 	`"Path`": `"$ConfigPathDoubleBackslashes`"
 },{
 	`"Name`": `"wProjectDesktop config`",
 	`"Path`": `"$configPath`"
+},{
+	`"Name`": `"Downloads`",
+	`"Path`": `"$downloads`"
 }
 ]" | Out-File -FilePath $ConfigPath\projects.json -Force -Encoding UTF8
     } else {
