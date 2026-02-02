@@ -177,7 +177,8 @@ function Show-Palette {
         }
         $keepOpened=$false
         Clear-Host # Sinon on verra tous les "Executing" (et "Command failed") précédents le temps que la commande s'exécute. Pas juste avant le "executing" parce qu'on veut aussi effacer les "Not a project". Pas réussi à mock.
-        $project = Get-CurrentDesktop | Get-DesktopName # 27mai25: "FromDesktop" failed with "Object reference not set to an instance of an object." 1.5.10\VirtualDesktop.ps1:1687 char:42. A relaunch of startupDocs.ps1 fixed it.
+        $project = Get-CurrentDesktop # 20jan26: fails with "The RPC server is unavailable. (0x800706BA)". J'avais une version installée par nonadmin, je désinstalle et passe admin de 1.5.10 à 1.5.11. Si ça se reproduit, next time try to run manually and raise an issue on https://github.com/MScholtes/PSVirtualDesktop
+            | Get-DesktopName # 27mai25: "FromDesktop" failed with "Object reference not set to an instance of an object." 1.5.10\VirtualDesktop.ps1:1687 char:42. A relaunch of startupDocs.ps1 fixed it.
         $projectList = Get-ProjectList
         $projectObj = $projectList | Where-Object { $_.Name -eq $project }
         if ($projectObj) {
